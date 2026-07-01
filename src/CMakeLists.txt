@@ -13,6 +13,8 @@ ecm_add_qml_module(persistent-stopwatch
 
 target_sources(persistent-stopwatch PRIVATE
     main.cpp
+    stopwatchengine.cpp
+    stopwatchengine.h
 )
 
 target_link_libraries(persistent-stopwatch PRIVATE
