@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
+import io.github.aaghashm.persistentstopwatch
 
 Kirigami.ApplicationWindow {
     id: root
@@ -10,8 +13,53 @@ Kirigami.ApplicationWindow {
     title: i18nc("@title:window", "Persistent Stopwatch")
     width: Kirigami.Units.gridUnit * 22
     height: Kirigami.Units.gridUnit * 28
+    minimumWidth: Kirigami.Units.gridUnit * 16
+    minimumHeight: Kirigami.Units.gridUnit * 20
+
+    StopwatchEngine {
+        id: stopwatch
+    }
 
     pageStack.initialPage: Kirigami.Page {
         title: i18nc("@title", "Stopwatch")
+
+        actions: [
+            Kirigami.Action {
+                text: stopwatch.state === StopwatchEngine.Running
+                    ? i18nc("@action:button pause the stopwatch", "Pause")
+                    : i18nc("@action:button start the stopwatch", "Start")
+                icon.name: stopwatch.state === StopwatchEngine.Running ? "chronometer-pause" : "chronometer-start"
+                onTriggered: stopwatch.state === StopwatchEngine.Running ? stopwatch.pause() : stopwatch.start()
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button reset the stopwatch to zero", "Reset")
+                icon.name: "chronometer-reset"
+                enabled: stopwatch.state !== StopwatchEngine.Stopped
+                onTriggered: stopwatch.reset()
+            }
+        ]
+
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: Kirigami.Units.largeSpacing
+
+            Kirigami.Heading {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: Kirigami.Units.gridUnit
+                text: stopwatch.formatDuration(stopwatch.elapsedMs)
+                font.family: Kirigami.Theme.fixedWidthFont.family
+                font.pointSize: Kirigami.Theme.defaultFont.pointSize * 4
+            }
+
+            Controls.Label {
+                Layout.alignment: Qt.AlignHCenter
+                text: i18nc("@info:status the stopwatch is paused", "Paused")
+                opacity: stopwatch.state === StopwatchEngine.Paused ? 0.7 : 0
+            }
+
+            Item {
+                Layout.fillHeight: true
+            }
+        }
     }
 }
