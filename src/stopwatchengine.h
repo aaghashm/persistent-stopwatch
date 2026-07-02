@@ -7,6 +7,8 @@
 #include <QTimer>
 #include <qqmlregistration.h>
 
+#include <functional>
+
 /**
  * The stopwatch state machine.
  *
@@ -31,6 +33,8 @@ public:
     Q_ENUM(State)
 
     explicit StopwatchEngine(QObject *parent = nullptr);
+    // Test seam: lets the test suite control "now" instead of the wall clock.
+    explicit StopwatchEngine(std::function<qint64()> clock, QObject *parent = nullptr);
 
     State state() const;
     qint64 elapsedMs() const;
@@ -48,6 +52,7 @@ Q_SIGNALS:
 private:
     void setState(State state);
 
+    std::function<qint64()> m_now;
     QTimer m_ticker;
     State m_state = Stopped;
     qint64 m_accumulatedMs = 0;

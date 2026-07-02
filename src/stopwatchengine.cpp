@@ -15,7 +15,13 @@ constexpr int tickIntervalMs = 33;
 }
 
 StopwatchEngine::StopwatchEngine(QObject *parent)
+    : StopwatchEngine([] { return QDateTime::currentMSecsSinceEpoch(); }, parent)
+{
+}
+
+StopwatchEngine::StopwatchEngine(std::function<qint64()> clock, QObject *parent)
     : QObject(parent)
+    , m_now(std::move(clock))
 {
     m_ticker.setInterval(tickIntervalMs);
     connect(&m_ticker, &QTimer::timeout, this, &StopwatchEngine::elapsedChanged);
@@ -31,7 +37,7 @@ qint64 StopwatchEngine::elapsedMs() const
     if (m_state != Running) {
         return m_accumulatedMs;
     }
-    return m_accumulatedMs + (QDateTime::currentMSecsSinceEpoch() - m_startedAtMs);
+    return m_accumulatedMs + (m_now() - m_startedAtMs);
 }
 
 void StopwatchEngine::start()
@@ -39,7 +45,7 @@ void StopwatchEngine::start()
     if (m_state == Running) {
         return;
     }
-    m_startedAtMs = QDateTime::currentMSecsSinceEpoch();
+    m_startedAtMs = m_now();
     setState(Running);
     m_ticker.start();
     Q_EMIT elapsedChanged();
