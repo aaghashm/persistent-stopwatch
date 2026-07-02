@@ -22,6 +22,7 @@ find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
     Qml
     Quick
     QuickControls2
+    Test
     Widgets
 )
 find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
@@ -31,3 +32,6 @@ find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
 ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 
 add_subdirectory(src)
+if(BUILD_TESTING)
+    add_subdirectory(autotests)
+endif()
