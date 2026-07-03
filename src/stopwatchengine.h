@@ -12,9 +12,10 @@
 /**
  * The stopwatch state machine.
  *
- * Elapsed time is derived from the wall-clock timestamp of the last
- * (re)start plus the milliseconds accumulated before it. Nothing is ever
- * counted, so a slow or throttled timer cannot make the stopwatch drift.
+ * The only facts that are ever persisted are the wall-clock timestamp of the
+ * last (re)start and the milliseconds accumulated before it. Elapsed time is
+ * always derived from those, never counted, so killing the process, suspend,
+ * or a reboot cannot lose time.
  */
 class StopwatchEngine : public QObject
 {
@@ -50,6 +51,8 @@ Q_SIGNALS:
     void elapsedChanged();
 
 private:
+    void saveState() const;
+    void restoreState();
     void setState(State state);
 
     std::function<qint64()> m_now;
