@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <QSignalSpy>
+#include <QStandardPaths>
 #include <QTest>
+
+#include <KConfigGroup>
+#include <KSharedConfig>
 
 #include "stopwatchengine.h"
 
@@ -13,8 +17,17 @@ class StopwatchEngineTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase()
+    {
+        QStandardPaths::setTestModeEnabled(true);
+    }
+
     void init()
     {
+        // Every test starts from a clean slate on disk.
+        auto config = KSharedConfig::openStateConfig();
+        config->deleteGroup(u"Stopwatch"_s);
+        config->sync();
         m_fakeNowMs = 1000000;
     }
 
@@ -66,6 +79,38 @@ private Q_SLOTS:
 
         QCOMPARE(engine.state(), StopwatchEngine::Stopped);
         QCOMPARE(engine.elapsedMs(), 0);
+    }
+
+    void testRunningStateSurvivesRestart()
+    {
+        {
+            StopwatchEngine engine(clock());
+            engine.start();
+            m_fakeNowMs += 2000;
+        }
+
+        // "Reboot": a whole minute passes with no process alive.
+        m_fakeNowMs += 60000;
+
+        StopwatchEngine restored(clock());
+        QCOMPARE(restored.state(), StopwatchEngine::Running);
+        QCOMPARE(restored.elapsedMs(), 62000);
+    }
+
+    void testPausedStateSurvivesRestart()
+    {
+        {
+            StopwatchEngine engine(clock());
+            engine.start();
+            m_fakeNowMs += 4500;
+            engine.pause();
+        }
+
+        m_fakeNowMs += 60000;
+
+        StopwatchEngine restored(clock());
+        QCOMPARE(restored.state(), StopwatchEngine::Paused);
+        QCOMPARE(restored.elapsedMs(), 4500);
     }
 
     void testStateChangedSignals()

@@ -10,5 +10,6 @@ ecm_add_test(
     LINK_LIBRARIES
         Qt6::Qml
         Qt6::Test
+        KF6::ConfigCore
 )
 target_include_directories(stopwatchenginetest PRIVATE ../src)

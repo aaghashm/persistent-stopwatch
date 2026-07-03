@@ -5,13 +5,21 @@
 
 #include <QDateTime>
 
+#include <KConfigGroup>
+#include <KSharedConfig>
+
 using namespace Qt::Literals::StringLiterals;
 
 namespace
 {
 // Fast enough that tenths of a second never visibly skip, slow enough to be
-// negligible CPU. Display-only: the elapsed time never depends on ticks.
+// negligible CPU. Display-only: persistence never depends on ticks.
 constexpr int tickIntervalMs = 33;
+
+KConfigGroup stateGroup()
+{
+    return KSharedConfig::openStateConfig()->group(u"Stopwatch"_s);
+}
 }
 
 StopwatchEngine::StopwatchEngine(QObject *parent)
@@ -25,6 +33,7 @@ StopwatchEngine::StopwatchEngine(std::function<qint64()> clock, QObject *parent)
 {
     m_ticker.setInterval(tickIntervalMs);
     connect(&m_ticker, &QTimer::timeout, this, &StopwatchEngine::elapsedChanged);
+    restoreState();
 }
 
 StopwatchEngine::State StopwatchEngine::state() const
@@ -48,6 +57,7 @@ void StopwatchEngine::start()
     m_startedAtMs = m_now();
     setState(Running);
     m_ticker.start();
+    saveState();
     Q_EMIT elapsedChanged();
 }
 
@@ -60,6 +70,7 @@ void StopwatchEngine::pause()
     m_startedAtMs = 0;
     setState(Paused);
     m_ticker.stop();
+    saveState();
     Q_EMIT elapsedChanged();
 }
 
@@ -69,6 +80,7 @@ void StopwatchEngine::reset()
     m_accumulatedMs = 0;
     m_startedAtMs = 0;
     setState(Stopped);
+    saveState();
     Q_EMIT elapsedChanged();
 }
 
@@ -89,4 +101,39 @@ void StopwatchEngine::setState(State state)
     }
     m_state = state;
     Q_EMIT stateChanged();
+}
+
+void StopwatchEngine::saveState() const
+{
+    KConfigGroup group = stateGroup();
+    group.writeEntry(u"State"_s, static_cast<int>(m_state));
+    group.writeEntry(u"AccumulatedMs"_s, m_accumulatedMs);
+    group.writeEntry(u"StartedAtMs"_s, m_startedAtMs);
+    // Sync immediately: state must hit disk before a crash or power loss can
+    // eat it, otherwise "persistent" is a lie.
+    group.sync();
+}
+
+void StopwatchEngine::restoreState()
+{
+    const KConfigGroup group = stateGroup();
+
+    const int storedState = group.readEntry(u"State"_s, static_cast<int>(Stopped));
+    m_accumulatedMs = group.readEntry(u"AccumulatedMs"_s, qint64(0));
+    m_startedAtMs = group.readEntry(u"StartedAtMs"_s, qint64(0));
+
+    switch (storedState) {
+    case Running:
+        setState(Running);
+        m_ticker.start();
+        break;
+    case Paused:
+        setState(Paused);
+        break;
+    default:
+        m_accumulatedMs = 0;
+        m_startedAtMs = 0;
+        setState(Stopped);
+        break;
+    }
 }
