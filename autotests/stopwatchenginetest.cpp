@@ -113,6 +113,17 @@ private Q_SLOTS:
         QCOMPARE(restored.elapsedMs(), 4500);
     }
 
+    void testBackwardClockJumpNeverShrinksElapsed()
+    {
+        StopwatchEngine engine(clock());
+        engine.start();
+        m_fakeNowMs += 3000;
+        QCOMPARE(engine.elapsedMs(), 3000);
+
+        m_fakeNowMs -= 10000;
+        QVERIFY(engine.elapsedMs() >= 0);
+    }
+
     void testStateChangedSignals()
     {
         StopwatchEngine engine(clock());
