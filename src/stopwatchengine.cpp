@@ -46,7 +46,9 @@ qint64 StopwatchEngine::elapsedMs() const
     if (m_state != Running) {
         return m_accumulatedMs;
     }
-    return m_accumulatedMs + (m_now() - m_startedAtMs);
+    // The wall clock can jump backward (NTP sync, manual change). Elapsed time
+    // must never shrink, so a negative delta counts as zero.
+    return m_accumulatedMs + std::max<qint64>(0, m_now() - m_startedAtMs);
 }
 
 void StopwatchEngine::start()
