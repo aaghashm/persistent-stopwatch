@@ -9,6 +9,8 @@
 
 #include <functional>
 
+#include "lapsmodel.h"
+
 /**
  * The stopwatch state machine.
  *
@@ -24,6 +26,7 @@ class StopwatchEngine : public QObject
 
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(qint64 elapsedMs READ elapsedMs NOTIFY elapsedChanged)
+    Q_PROPERTY(LapsModel *laps READ laps CONSTANT)
 
 public:
     enum State {
@@ -39,10 +42,12 @@ public:
 
     State state() const;
     qint64 elapsedMs() const;
+    LapsModel *laps() const;
 
     Q_INVOKABLE void start();
     Q_INVOKABLE void pause();
     Q_INVOKABLE void reset();
+    Q_INVOKABLE void lap();
 
     Q_INVOKABLE QString formatDuration(qint64 ms) const;
 
@@ -56,6 +61,7 @@ private:
     void setState(State state);
 
     std::function<qint64()> m_now;
+    LapsModel *const m_laps;
     QTimer m_ticker;
     State m_state = Stopped;
     qint64 m_accumulatedMs = 0;
