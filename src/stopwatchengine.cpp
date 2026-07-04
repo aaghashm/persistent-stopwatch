@@ -121,15 +121,29 @@ void StopwatchEngine::restoreState()
     const KConfigGroup group = stateGroup();
 
     const int storedState = group.readEntry(u"State"_s, static_cast<int>(Stopped));
-    m_accumulatedMs = group.readEntry(u"AccumulatedMs"_s, qint64(0));
+    m_accumulatedMs = std::max<qint64>(0, group.readEntry(u"AccumulatedMs"_s, qint64(0)));
     m_startedAtMs = group.readEntry(u"StartedAtMs"_s, qint64(0));
 
     switch (storedState) {
     case Running:
+        if (m_startedAtMs <= 0) {
+            // A running state without a start timestamp is corrupt; the
+            // accumulated time is still trustworthy, so keep it as paused.
+            setState(Paused);
+            saveState();
+            break;
+        }
+        if (m_startedAtMs > m_now()) {
+            // Clock went backward across the restart. Restart the running
+            // segment from now so elapsed keeps what was accumulated.
+            m_startedAtMs = m_now();
+            saveState();
+        }
         setState(Running);
         m_ticker.start();
         break;
     case Paused:
+        m_startedAtMs = 0;
         setState(Paused);
         break;
     default:
