@@ -124,6 +124,50 @@ private Q_SLOTS:
         QVERIFY(engine.elapsedMs() >= 0);
     }
 
+    void testRestartWithClockInThePast()
+    {
+        {
+            StopwatchEngine engine(clock());
+            engine.start();
+            m_fakeNowMs += 3000;
+            engine.pause();
+            engine.start();
+        }
+
+        // The clock is behind the stored start timestamp after the restart,
+        // e.g. the machine booted with a dead RTC battery.
+        m_fakeNowMs -= 50000;
+
+        StopwatchEngine restored(clock());
+        QCOMPARE(restored.state(), StopwatchEngine::Running);
+        QCOMPARE(restored.elapsedMs(), 3000);
+
+        // And it keeps counting forward from there.
+        m_fakeNowMs += 1000;
+        QCOMPARE(restored.elapsedMs(), 4000);
+    }
+
+    void testCorruptedRunningStateDemotedToPaused()
+    {
+        {
+            StopwatchEngine engine(clock());
+            engine.start();
+            m_fakeNowMs += 7000;
+            engine.pause();
+        }
+
+        // Force an impossible on-disk state: running but no start timestamp.
+        auto config = KSharedConfig::openStateConfig();
+        KConfigGroup group = config->group(u"Stopwatch"_s);
+        group.writeEntry(u"State"_s, static_cast<int>(StopwatchEngine::Running));
+        group.writeEntry(u"StartedAtMs"_s, qint64(0));
+        config->sync();
+
+        StopwatchEngine restored(clock());
+        QCOMPARE(restored.state(), StopwatchEngine::Paused);
+        QCOMPARE(restored.elapsedMs(), 7000);
+    }
+
     void testStateChangedSignals()
     {
         StopwatchEngine engine(clock());
