@@ -30,6 +30,7 @@ StopwatchEngine::StopwatchEngine(QObject *parent)
 StopwatchEngine::StopwatchEngine(std::function<qint64()> clock, QObject *parent)
     : QObject(parent)
     , m_now(std::move(clock))
+    , m_laps(new LapsModel(this))
 {
     m_ticker.setInterval(tickIntervalMs);
     connect(&m_ticker, &QTimer::timeout, this, &StopwatchEngine::elapsedChanged);
@@ -49,6 +50,11 @@ qint64 StopwatchEngine::elapsedMs() const
     // The wall clock can jump backward (NTP sync, manual change). Elapsed time
     // must never shrink, so a negative delta counts as zero.
     return m_accumulatedMs + std::max<qint64>(0, m_now() - m_startedAtMs);
+}
+
+LapsModel *StopwatchEngine::laps() const
+{
+    return m_laps;
 }
 
 void StopwatchEngine::start()
@@ -81,9 +87,19 @@ void StopwatchEngine::reset()
     m_ticker.stop();
     m_accumulatedMs = 0;
     m_startedAtMs = 0;
+    m_laps->clear();
     setState(Stopped);
     saveState();
     Q_EMIT elapsedChanged();
+}
+
+void StopwatchEngine::lap()
+{
+    if (m_state != Running) {
+        return;
+    }
+    m_laps->addLap(elapsedMs());
+    saveState();
 }
 
 QString StopwatchEngine::formatDuration(qint64 ms) const
@@ -111,6 +127,7 @@ void StopwatchEngine::saveState() const
     group.writeEntry(u"State"_s, static_cast<int>(m_state));
     group.writeEntry(u"AccumulatedMs"_s, m_accumulatedMs);
     group.writeEntry(u"StartedAtMs"_s, m_startedAtMs);
+    group.writeEntry(u"Laps"_s, m_laps->serialized());
     // Sync immediately: state must hit disk before a crash or power loss can
     // eat it, otherwise "persistent" is a lie.
     group.sync();
@@ -123,6 +140,7 @@ void StopwatchEngine::restoreState()
     const int storedState = group.readEntry(u"State"_s, static_cast<int>(Stopped));
     m_accumulatedMs = std::max<qint64>(0, group.readEntry(u"AccumulatedMs"_s, qint64(0)));
     m_startedAtMs = group.readEntry(u"StartedAtMs"_s, qint64(0));
+    m_laps->restore(group.readEntry(u"Laps"_s, QStringList()));
 
     switch (storedState) {
     case Running:

@@ -36,6 +36,7 @@ private Q_SLOTS:
         StopwatchEngine engine(clock());
         QCOMPARE(engine.state(), StopwatchEngine::Stopped);
         QCOMPARE(engine.elapsedMs(), 0);
+        QCOMPARE(engine.laps()->rowCount(), 0);
     }
 
     void testElapsedFollowsClock()
@@ -75,10 +76,50 @@ private Q_SLOTS:
         StopwatchEngine engine(clock());
         engine.start();
         m_fakeNowMs += 3000;
+        engine.lap();
         engine.reset();
 
         QCOMPARE(engine.state(), StopwatchEngine::Stopped);
         QCOMPARE(engine.elapsedMs(), 0);
+        QCOMPARE(engine.laps()->rowCount(), 0);
+    }
+
+    void testLapsRecordSplitsAndTotals()
+    {
+        StopwatchEngine engine(clock());
+        engine.start();
+
+        m_fakeNowMs += 10000;
+        engine.lap();
+        m_fakeNowMs += 4000;
+        engine.lap();
+
+        LapsModel *laps = engine.laps();
+        QCOMPARE(laps->rowCount(), 2);
+
+        // Row 0 is the newest lap.
+        const QModelIndex newest = laps->index(0, 0);
+        QCOMPARE(newest.data(LapsModel::NumberRole).toInt(), 2);
+        QCOMPARE(newest.data(LapsModel::SplitMsRole).toLongLong(), 4000);
+        QCOMPARE(newest.data(LapsModel::TotalMsRole).toLongLong(), 14000);
+
+        const QModelIndex oldest = laps->index(1, 0);
+        QCOMPARE(oldest.data(LapsModel::NumberRole).toInt(), 1);
+        QCOMPARE(oldest.data(LapsModel::SplitMsRole).toLongLong(), 10000);
+        QCOMPARE(oldest.data(LapsModel::TotalMsRole).toLongLong(), 10000);
+    }
+
+    void testLapIgnoredUnlessRunning()
+    {
+        StopwatchEngine engine(clock());
+        engine.lap();
+        QCOMPARE(engine.laps()->rowCount(), 0);
+
+        engine.start();
+        m_fakeNowMs += 1000;
+        engine.pause();
+        engine.lap();
+        QCOMPARE(engine.laps()->rowCount(), 0);
     }
 
     void testRunningStateSurvivesRestart()
@@ -87,6 +128,7 @@ private Q_SLOTS:
             StopwatchEngine engine(clock());
             engine.start();
             m_fakeNowMs += 2000;
+            engine.lap();
         }
 
         // "Reboot": a whole minute passes with no process alive.
@@ -95,6 +137,7 @@ private Q_SLOTS:
         StopwatchEngine restored(clock());
         QCOMPARE(restored.state(), StopwatchEngine::Running);
         QCOMPARE(restored.elapsedMs(), 62000);
+        QCOMPARE(restored.laps()->rowCount(), 1);
     }
 
     void testPausedStateSurvivesRestart()
@@ -166,6 +209,17 @@ private Q_SLOTS:
         StopwatchEngine restored(clock());
         QCOMPARE(restored.state(), StopwatchEngine::Paused);
         QCOMPARE(restored.elapsedMs(), 7000);
+    }
+
+    void testCorruptedLapsAreDropped()
+    {
+        auto config = KSharedConfig::openStateConfig();
+        KConfigGroup group = config->group(u"Stopwatch"_s);
+        group.writeEntry(u"Laps"_s, QStringList{u"1000"_s, u"garbage"_s, u"2000"_s});
+        config->sync();
+
+        StopwatchEngine engine(clock());
+        QCOMPARE(engine.laps()->rowCount(), 1);
     }
 
     void testStateChangedSignals()

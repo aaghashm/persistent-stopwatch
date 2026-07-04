@@ -6,6 +6,7 @@ include(ECMAddTests)
 ecm_add_test(
     stopwatchenginetest.cpp
     ../src/stopwatchengine.cpp
+    ../src/lapsmodel.cpp
     TEST_NAME stopwatchenginetest
     LINK_LIBRARIES
         Qt6::Qml
