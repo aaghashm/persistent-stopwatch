@@ -20,6 +20,19 @@ Kirigami.ApplicationWindow {
         id: stopwatch
     }
 
+    Shortcut {
+        sequence: "Space"
+        onActivated: stopwatch.state === StopwatchEngine.Running ? stopwatch.pause() : stopwatch.start()
+    }
+    Shortcut {
+        sequence: "L"
+        onActivated: stopwatch.lap()
+    }
+    Shortcut {
+        sequence: "R"
+        onActivated: stopwatch.reset()
+    }
+
     pageStack.initialPage: Kirigami.Page {
         title: i18nc("@title", "Stopwatch")
 
@@ -97,6 +110,15 @@ Kirigami.ApplicationWindow {
                             font.family: Kirigami.Theme.fixedWidthFont.family
                         }
                     }
+                }
+
+                Kirigami.PlaceholderMessage {
+                    anchors.centerIn: parent
+                    width: parent.width - Kirigami.Units.gridUnit * 4
+                    visible: lapsView.count === 0
+                    icon.name: "chronometer"
+                    text: i18nc("@info:placeholder", "No laps yet")
+                    explanation: i18nc("@info:placeholder", "Press Lap while the stopwatch is running")
                 }
             }
         }
