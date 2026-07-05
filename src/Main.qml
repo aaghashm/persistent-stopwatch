@@ -32,6 +32,12 @@ Kirigami.ApplicationWindow {
                 onTriggered: stopwatch.state === StopwatchEngine.Running ? stopwatch.pause() : stopwatch.start()
             },
             Kirigami.Action {
+                text: i18nc("@action:button record a lap", "Lap")
+                icon.name: "chronometer-lap"
+                enabled: stopwatch.state === StopwatchEngine.Running
+                onTriggered: stopwatch.lap()
+            },
+            Kirigami.Action {
                 text: i18nc("@action:button reset the stopwatch to zero", "Reset")
                 icon.name: "chronometer-reset"
                 enabled: stopwatch.state !== StopwatchEngine.Stopped
@@ -57,8 +63,41 @@ Kirigami.ApplicationWindow {
                 opacity: stopwatch.state === StopwatchEngine.Paused ? 0.7 : 0
             }
 
-            Item {
+            ListView {
+                id: lapsView
+
+                Layout.fillWidth: true
                 Layout.fillHeight: true
+                clip: true
+                model: stopwatch.laps
+
+                delegate: Controls.ItemDelegate {
+                    required property int number
+                    required property double splitMs
+                    required property double totalMs
+
+                    width: ListView.view.width
+
+                    contentItem: RowLayout {
+                        spacing: Kirigami.Units.largeSpacing
+
+                        Controls.Label {
+                            text: i18nc("@item:intable numbered lap", "Lap %1", number)
+                            opacity: 0.7
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                        }
+                        Controls.Label {
+                            text: "+" + stopwatch.formatDuration(splitMs)
+                            font.family: Kirigami.Theme.fixedWidthFont.family
+                        }
+                        Controls.Label {
+                            text: stopwatch.formatDuration(totalMs)
+                            font.family: Kirigami.Theme.fixedWidthFont.family
+                        }
+                    }
+                }
             }
         }
     }
