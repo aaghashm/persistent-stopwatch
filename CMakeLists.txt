@@ -37,3 +37,6 @@ add_subdirectory(src)
 if(BUILD_TESTING)
     add_subdirectory(autotests)
 endif()
+
+install(FILES io.github.aaghashm.persistentstopwatch.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(FILES io.github.aaghashm.persistentstopwatch.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
