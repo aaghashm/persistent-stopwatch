@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+SPDX-License-Identifier: CC0-1.0
+-->
+<component type="desktop-application">
+  <id>io.github.aaghashm.persistentstopwatch</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+  <name>Persistent Stopwatch</name>
+  <summary>Stopwatch that survives reboots</summary>
+  <description>
+    <p>
+      A stopwatch that never loses time. Instead of counting ticks, it stores
+      the moment you pressed start, so closing the app, suspending the
+      machine, or rebooting does not stop the clock. Reopen it days later and
+      the elapsed time is exactly right.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Elapsed time survives application restarts and system reboots</li>
+      <li>Lap times with per-lap splits and running totals</li>
+      <li>Keyboard shortcuts: Space to start and pause, L for lap, R to reset</li>
+      <li>Native Plasma look and feel, built with Kirigami</li>
+    </ul>
+  </description>
+  <developer id="io.github.aaghashm">
+    <name>Aaghash Murugesan</name>
+  </developer>
+  <launchable type="desktop-id">io.github.aaghashm.persistentstopwatch.desktop</launchable>
+  <url type="homepage">https://github.com/aaghashm/persistent-stopwatch</url>
+  <url type="bugtracker">https://github.com/aaghashm/persistent-stopwatch/issues</url>
+  <url type="vcs-browser">https://github.com/aaghashm/persistent-stopwatch</url>
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+</component>
