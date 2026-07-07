@@ -15,6 +15,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMFindQmlModule)
+include(ECMInstallIcons)
 
 find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
     Core
@@ -38,5 +39,6 @@ if(BUILD_TESTING)
     add_subdirectory(autotests)
 endif()
 
+ecm_install_icons(ICONS icons/sc-apps-io.github.aaghashm.persistentstopwatch.svg DESTINATION ${KDE_INSTALL_ICONDIR})
 install(FILES io.github.aaghashm.persistentstopwatch.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES io.github.aaghashm.persistentstopwatch.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
