@@ -248,7 +248,9 @@ private Q_SLOTS:
 private:
     std::function<qint64()> clock()
     {
-        return [this] { return m_fakeNowMs; };
+        return [this] {
+            return m_fakeNowMs;
+        };
     }
 
     qint64 m_fakeNowMs = 0;
