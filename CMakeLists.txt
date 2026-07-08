@@ -16,6 +16,8 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMFindQmlModule)
 include(ECMInstallIcons)
+include(KDEClangFormat)
+include(KDEGitCommitHooks)
 
 find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
     Core
@@ -42,3 +44,7 @@ endif()
 ecm_install_icons(ICONS icons/sc-apps-io.github.aaghashm.persistentstopwatch.svg DESTINATION ${KDE_INSTALL_ICONDIR})
 install(FILES io.github.aaghashm.persistentstopwatch.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES io.github.aaghashm.persistentstopwatch.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+
+file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES src/*.cpp src/*.h autotests/*.cpp)
+kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
+kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
