@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Fedora has current Qt 6 and KDE Frameworks 6 packages; Ubuntu LTS does not.
+    container: fedora:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf install -y --setopt=install_weak_deps=False \
+            git cmake ninja-build gcc-c++ extra-cmake-modules \
+            qt6-qtbase-devel qt6-qtdeclarative-devel \
+            kf6-kirigami-devel kf6-kconfig-devel kf6-ki18n-devel kf6-kcoreaddons-devel \
+            appstream
+
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
