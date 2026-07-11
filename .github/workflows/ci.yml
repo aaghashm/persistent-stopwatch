@@ -31,3 +31,24 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --output-on-failure
+
+  lint:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    steps:
+      - name: Install tools
+        run: dnf install -y --setopt=install_weak_deps=False git reuse appstream desktop-file-utils clang-tools-extra
+
+      - uses: actions/checkout@v4
+
+      - name: REUSE compliance
+        run: reuse lint
+
+      - name: Desktop file
+        run: desktop-file-validate io.github.aaghashm.persistentstopwatch.desktop
+
+      - name: AppStream metadata
+        run: appstreamcli validate --no-net --pedantic io.github.aaghashm.persistentstopwatch.metainfo.xml
+
+      - name: Formatting
+        run: clang-format --dry-run --Werror src/*.cpp src/*.h autotests/*.cpp
