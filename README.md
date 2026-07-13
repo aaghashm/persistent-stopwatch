@@ -5,6 +5,8 @@ SPDX-License-Identifier: CC0-1.0
 
 # Persistent Stopwatch
 
+[![CI](https://github.com/aaghashm/persistent-stopwatch/actions/workflows/ci.yml/badge.svg)](https://github.com/aaghashm/persistent-stopwatch/actions/workflows/ci.yml)
+
 A stopwatch for KDE Plasma that never loses time.
 
 ## Why this exists
@@ -67,7 +69,8 @@ environments and app stores read: the launcher entry and the store listing.
 Working: the engine with unit tests, the Kirigami UI, persistence across
 restarts and reboots, app icon, desktop integration files.
 
-Next: CI, a tagged release, and an RPM so it can be installed with dnf.
+0.1.0 is out. Next: controlling the stopwatch from the command line, and
+an RPM so it can be installed with dnf.
 
 ## Building from source
 
