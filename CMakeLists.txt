@@ -31,8 +31,10 @@ find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
 find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
     Config
     CoreAddons
+    DBusAddons
     I18n
     Kirigami
+    WindowSystem
 )
 ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 

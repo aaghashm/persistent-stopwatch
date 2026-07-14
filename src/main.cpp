@@ -5,10 +5,15 @@
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
+#include <QQuickWindow>
 
 #include <KAboutData>
+#include <KDBusService>
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
+#include <KWindowSystem>
+
+#include "stopwatchengine.h"
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -30,18 +35,32 @@ int main(int argc, char *argv[])
     QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
     QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
 
+    // Two windows would each hold their own copy of the state and overwrite
+    // each other's saves. A second launch just raises the first window.
+    // Without a session bus (e.g. a bare X session) we simply run unguarded.
+    KDBusService service(KDBusService::Unique | KDBusService::NoExitOnFailure);
+
     // Without the org.kde.desktop style, QML controls fall back to the plain
     // Qt look and feel out of place on Plasma. Respect an explicit override.
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
         QQuickStyle::setStyle(u"org.kde.desktop"_s);
     }
 
+    StopwatchEngine stopwatch;
+
     QQmlApplicationEngine engine;
     KLocalization::setupLocalizedContext(&engine);
+    engine.setInitialProperties({{u"stopwatch"_s, QVariant::fromValue(&stopwatch)}});
     engine.loadFromModule(u"io.github.aaghashm.persistentstopwatch"_s, u"Main"_s);
     if (engine.rootObjects().isEmpty()) {
         return 1;
     }
+
+    auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst());
+    QObject::connect(&service, &KDBusService::activateRequested, window, [window] {
+        KWindowSystem::updateStartupId(window);
+        KWindowSystem::activateWindow(window);
+    });
 
     return app.exec();
 }
