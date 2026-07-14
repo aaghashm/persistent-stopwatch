@@ -16,9 +16,7 @@ Kirigami.ApplicationWindow {
     minimumWidth: Kirigami.Units.gridUnit * 16
     minimumHeight: Kirigami.Units.gridUnit * 20
 
-    StopwatchEngine {
-        id: stopwatch
-    }
+    required property StopwatchEngine stopwatch
 
     Shortcut {
         sequence: "Space"
