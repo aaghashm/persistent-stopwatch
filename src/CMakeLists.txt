@@ -28,6 +28,7 @@ target_link_libraries(persistent-stopwatch PRIVATE
     Qt6::Widgets
     KF6::ConfigCore
     KF6::CoreAddons
+    KF6::Crash
     KF6::DBusAddons
     KF6::I18n
     KF6::I18nQml
