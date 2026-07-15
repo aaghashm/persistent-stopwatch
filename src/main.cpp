@@ -8,6 +8,7 @@
 #include <QQuickWindow>
 
 #include <KAboutData>
+#include <KCrash>
 #include <KDBusService>
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
@@ -31,6 +32,7 @@ int main(int argc, char *argv[])
                          i18n("© 2026 Aaghash Murugesan"));
     aboutData.addAuthor(i18nc("@info:credit", "Aaghash Murugesan"), i18nc("@info:credit role", "Maintainer"), u"aaghashm@gmail.com"_s);
     KAboutData::setApplicationData(aboutData);
+    KCrash::initialize();
 
     QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
     QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
