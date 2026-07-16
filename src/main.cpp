@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
@@ -14,6 +15,7 @@
 #include <KLocalizedString>
 #include <KWindowSystem>
 
+#include "commandline.h"
 #include "stopwatchengine.h"
 
 using namespace Qt::Literals::StringLiterals;
@@ -34,21 +36,34 @@ int main(int argc, char *argv[])
     KAboutData::setApplicationData(aboutData);
     KCrash::initialize();
 
+    QCommandLineParser parser;
+    CommandLine::addOptions(parser);
+    aboutData.setupCommandLine(&parser);
+    parser.process(app);
+    aboutData.processCommandLine(&parser);
+
     QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
     QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
 
     // Two windows would each hold their own copy of the state and overwrite
-    // each other's saves. A second launch just raises the first window.
-    // Without a session bus (e.g. a bare X session) we simply run unguarded.
+    // each other's saves. A second launch hands its arguments to the first
+    // one and exits here. Without a session bus we simply run unguarded.
     KDBusService service(KDBusService::Unique | KDBusService::NoExitOnFailure);
+
+    StopwatchEngine stopwatch;
+
+    // Nothing else is running, so the state on disk is ours: apply the
+    // actions and leave without ever showing a window.
+    if (CommandLine::hasAction(parser)) {
+        CommandLine::applyActions(parser, stopwatch);
+        return 0;
+    }
 
     // Without the org.kde.desktop style, QML controls fall back to the plain
     // Qt look and feel out of place on Plasma. Respect an explicit override.
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
         QQuickStyle::setStyle(u"org.kde.desktop"_s);
     }
-
-    StopwatchEngine stopwatch;
 
     QQmlApplicationEngine engine;
     KLocalization::setupLocalizedContext(&engine);
@@ -59,7 +74,13 @@ int main(int argc, char *argv[])
     }
 
     auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst());
-    QObject::connect(&service, &KDBusService::activateRequested, window, [window] {
+    QObject::connect(&service, &KDBusService::activateRequested, window, [window, &stopwatch](const QStringList &arguments) {
+        QCommandLineParser remoteParser;
+        CommandLine::addOptions(remoteParser);
+        if (remoteParser.parse(arguments) && CommandLine::hasAction(remoteParser)) {
+            CommandLine::applyActions(remoteParser, stopwatch);
+            return;
+        }
         KWindowSystem::updateStartupId(window);
         KWindowSystem::activateWindow(window);
     });
