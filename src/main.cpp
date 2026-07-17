@@ -7,6 +7,7 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQuickWindow>
+#include <QTextStream>
 
 #include <KAboutData>
 #include <KCrash>
@@ -45,6 +46,14 @@ int main(int argc, char *argv[])
     QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
     QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
 
+    // Reading needs no coordination: whoever owns the state syncs it to disk
+    // on every change, so the file is always current.
+    if (CommandLine::wantsStatus(parser) && !CommandLine::hasAction(parser)) {
+        const StopwatchEngine stopwatch;
+        QTextStream(stdout) << CommandLine::statusLine(stopwatch) << Qt::endl;
+        return 0;
+    }
+
     // Two windows would each hold their own copy of the state and overwrite
     // each other's saves. A second launch hands its arguments to the first
     // one and exits here. Without a session bus we simply run unguarded.
@@ -56,6 +65,9 @@ int main(int argc, char *argv[])
     // actions and leave without ever showing a window.
     if (CommandLine::hasAction(parser)) {
         CommandLine::applyActions(parser, stopwatch);
+        if (CommandLine::wantsStatus(parser)) {
+            QTextStream(stdout) << CommandLine::statusLine(stopwatch) << Qt::endl;
+        }
         return 0;
     }
 
