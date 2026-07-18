@@ -14,3 +14,17 @@ ecm_add_test(
         KF6::ConfigCore
 )
 target_include_directories(stopwatchenginetest PRIVATE ../src)
+
+ecm_add_test(
+    commandlinetest.cpp
+    ../src/commandline.cpp
+    ../src/stopwatchengine.cpp
+    ../src/lapsmodel.cpp
+    TEST_NAME commandlinetest
+    LINK_LIBRARIES
+        Qt6::Qml
+        Qt6::Test
+        KF6::ConfigCore
+        KF6::I18n
+)
+target_include_directories(commandlinetest PRIVATE ../src)
