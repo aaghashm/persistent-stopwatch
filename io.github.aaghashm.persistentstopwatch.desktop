@@ -9,3 +9,20 @@ Icon=io.github.aaghashm.persistentstopwatch
 Type=Application
 Terminal=false
 Categories=Qt;KDE;Utility;
+Actions=Start;Pause;Lap;Reset;
+
+[Desktop Action Start]
+Name=Start
+Exec=persistent-stopwatch --start
+
+[Desktop Action Pause]
+Name=Pause
+Exec=persistent-stopwatch --pause
+
+[Desktop Action Lap]
+Name=Lap
+Exec=persistent-stopwatch --lap
+
+[Desktop Action Reset]
+Name=Reset
+Exec=persistent-stopwatch --reset
