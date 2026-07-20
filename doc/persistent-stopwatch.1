@@ -1,0 +1,59 @@
+.\" SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+.\" SPDX-License-Identifier: CC0-1.0
+.TH PERSISTENT-STOPWATCH 1 "July 2026" "persistent-stopwatch 0.1.0" "User Commands"
+.SH NAME
+persistent-stopwatch \- a stopwatch that keeps counting across restarts and reboots
+.SH SYNOPSIS
+.B persistent-stopwatch
+[\fB\-\-start\fR] [\fB\-\-pause\fR] [\fB\-\-lap\fR] [\fB\-\-reset\fR] [\fB\-\-status\fR]
+.SH DESCRIPTION
+Without options, opens the stopwatch window.
+If the window is already open, it is raised instead of opening a second one.
+.PP
+The stopwatch does not count while it runs.
+It stores the moment it was started and computes the elapsed time from that,
+so closing the window, suspending or rebooting the machine does not stop it.
+.SH OPTIONS
+.TP
+.B \-\-start
+Start the stopwatch, or resume it if paused.
+.TP
+.B \-\-pause
+Pause the stopwatch.
+.TP
+.B \-\-lap
+Record a lap. Ignored unless the stopwatch is running.
+.TP
+.B \-\-reset
+Reset the stopwatch to zero and clear all laps.
+.TP
+.B \-\-status
+Print the state and the elapsed time, for example
+.BR "Running 00:12:03.4" ,
+then exit.
+.PP
+Action options can be combined. They are applied in the order reset, start,
+lap, pause, so
+.B "\-\-reset \-\-start"
+always restarts from zero.
+If the window is open, actions are sent to it.
+Otherwise they are applied to the saved state and the program exits without
+opening a window.
+.SH FILES
+.TP
+.I ~/.local/state/persistentstopwatchstaterc
+The saved state. Written on every change.
+.SH EXAMPLES
+Time a long build:
+.PP
+.RS
+.nf
+persistent-stopwatch \-\-reset \-\-start
+make
+persistent-stopwatch \-\-pause \-\-status
+.fi
+.RE
+.SH BUGS
+https://github.com/aaghashm/persistent-stopwatch/issues
+.SH AUTHOR
+Aaghash Murugesan <aaghashm@gmail.com>
