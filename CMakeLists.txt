@@ -47,6 +47,7 @@ endif()
 ecm_install_icons(ICONS icons/sc-apps-io.github.aaghashm.persistentstopwatch.svg DESTINATION ${KDE_INSTALL_ICONDIR})
 install(FILES io.github.aaghashm.persistentstopwatch.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES io.github.aaghashm.persistentstopwatch.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+install(FILES doc/persistent-stopwatch.1 DESTINATION ${KDE_INSTALL_MANDIR}/man1)
 
 file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES src/*.cpp src/*.h autotests/*.cpp)
 kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
