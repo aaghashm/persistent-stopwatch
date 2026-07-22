@@ -51,6 +51,8 @@ install(FILES doc/persistent-stopwatch.1 DESTINATION ${KDE_INSTALL_MANDIR}/man1)
 install(FILES completions/persistent-stopwatch.bash
         DESTINATION ${KDE_INSTALL_DATADIR}/bash-completion/completions
         RENAME persistent-stopwatch)
+install(FILES completions/_persistent-stopwatch DESTINATION ${KDE_INSTALL_ZSHAUTOCOMPLETEDIR})
+install(FILES completions/persistent-stopwatch.fish DESTINATION ${KDE_INSTALL_DATADIR}/fish/vendor_completions.d)
 
 file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES src/*.cpp src/*.h autotests/*.cpp)
 kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
