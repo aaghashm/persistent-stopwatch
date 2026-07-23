@@ -37,6 +37,20 @@ like KClock do it.
 - Keyboard shortcuts: **Space** start/pause · **L** lap · **R** reset
 - Native Plasma look and feel, including your system fonts and icon theme
 
+## Command line
+
+The window is optional. Everything can be done from a terminal, a script
+or a global shortcut:
+
+```
+persistent-stopwatch --reset --start   # restart from zero
+persistent-stopwatch --lap
+persistent-stopwatch --pause --status  # Paused 00:42:17.3
+```
+
+If the window is open, the command is sent to it. If not, the saved state
+is updated and nothing is shown. See `man persistent-stopwatch`.
+
 ## How the code is laid out
 
 ```
@@ -50,14 +64,18 @@ src/
                             data is sanity-checked before use.
   Main.qml                  The whole UI: one Kirigami page with the time
                             display, actions, and the lap list.
-  main.cpp                  Startup wiring: KAboutData, localization,
-                            window icon, QML engine.
+  commandline.{h,cpp}       The --start/--pause/--lap/--reset/--status
+                            options, shared by main() and the tests.
+  main.cpp                  Startup wiring: KAboutData, single instance,
+                            command line, QML engine.
 autotests/
   stopwatchenginetest.cpp   Unit tests for the engine. The engine takes an
                             injectable clock, so tests simulate restarts,
                             reboots, and clocks that jump backwards without
                             ever sleeping.
 icons/                      The app icon (Breeze-style SVG).
+doc/                        Man page.
+completions/                bash, zsh and fish completions.
 LICENSES/                   Full license texts, per the REUSE spec.
 ```
 
@@ -80,6 +98,7 @@ Dependencies (Fedora):
 sudo dnf install cmake ninja-build gcc-c++ extra-cmake-modules \
     qt6-qtbase-devel qt6-qtdeclarative-devel \
     kf6-kirigami-devel kf6-kconfig-devel kf6-ki18n-devel kf6-kcoreaddons-devel \
+    kf6-kcrash-devel kf6-kdbusaddons-devel kf6-kwindowsystem-devel \
     kf6-qqc2-desktop-style
 ```
 
