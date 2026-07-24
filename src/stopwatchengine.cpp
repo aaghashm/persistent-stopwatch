@@ -56,6 +56,14 @@ qint64 StopwatchEngine::elapsedMs() const
     return m_accumulatedMs + std::max<qint64>(0, m_now() - m_startedAtMs);
 }
 
+QDateTime StopwatchEngine::startedAt() const
+{
+    if (m_state == Stopped) {
+        return {};
+    }
+    return QDateTime::fromMSecsSinceEpoch(m_firstStartedAtMs);
+}
+
 LapsModel *StopwatchEngine::laps() const
 {
     return m_laps;
@@ -67,6 +75,9 @@ void StopwatchEngine::start()
         return;
     }
     m_startedAtMs = m_now();
+    if (m_state == Stopped) {
+        m_firstStartedAtMs = m_startedAtMs;
+    }
     setState(Running);
     m_ticker.start();
     saveState();
@@ -91,6 +102,7 @@ void StopwatchEngine::reset()
     m_ticker.stop();
     m_accumulatedMs = 0;
     m_startedAtMs = 0;
+    m_firstStartedAtMs = 0;
     m_laps->clear();
     setState(Stopped);
     saveState();
@@ -130,6 +142,7 @@ void StopwatchEngine::saveState() const
     group.writeEntry(u"State"_s, static_cast<int>(m_state));
     group.writeEntry(u"AccumulatedMs"_s, m_accumulatedMs);
     group.writeEntry(u"StartedAtMs"_s, m_startedAtMs);
+    group.writeEntry(u"FirstStartedAtMs"_s, m_firstStartedAtMs);
     group.writeEntry(u"Laps"_s, m_laps->serialized());
     // Sync immediately: state must hit disk before a crash or power loss can
     // eat it, otherwise "persistent" is a lie.
@@ -143,6 +156,7 @@ void StopwatchEngine::restoreState()
     const int storedState = group.readEntry(u"State"_s, static_cast<int>(Stopped));
     m_accumulatedMs = std::max<qint64>(0, group.readEntry(u"AccumulatedMs"_s, qint64(0)));
     m_startedAtMs = group.readEntry(u"StartedAtMs"_s, qint64(0));
+    m_firstStartedAtMs = group.readEntry(u"FirstStartedAtMs"_s, qint64(0));
     m_laps->restore(group.readEntry(u"Laps"_s, QStringList()));
 
     switch (storedState) {
@@ -170,6 +184,7 @@ void StopwatchEngine::restoreState()
     default:
         m_accumulatedMs = 0;
         m_startedAtMs = 0;
+        m_firstStartedAtMs = 0;
         setState(Stopped);
         break;
     }

@@ -156,6 +156,28 @@ private Q_SLOTS:
         QCOMPARE(restored.elapsedMs(), 4500);
     }
 
+    void testStartedAtSurvivesPauseAndRestart()
+    {
+        const qint64 firstStart = m_fakeNowMs;
+        {
+            StopwatchEngine engine(clock());
+            QVERIFY(!engine.startedAt().isValid());
+
+            engine.start();
+            m_fakeNowMs += 5000;
+            engine.pause();
+            m_fakeNowMs += 5000;
+            engine.start();
+            QCOMPARE(engine.startedAt().toMSecsSinceEpoch(), firstStart);
+        }
+
+        StopwatchEngine restored(clock());
+        QCOMPARE(restored.startedAt().toMSecsSinceEpoch(), firstStart);
+
+        restored.reset();
+        QVERIFY(!restored.startedAt().isValid());
+    }
+
     void testBackwardClockJumpNeverShrinksElapsed()
     {
         StopwatchEngine engine(clock());

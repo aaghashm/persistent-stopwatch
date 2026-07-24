@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <QDateTime>
 #include <QObject>
 #include <QTimer>
 #include <qqmlregistration.h>
@@ -26,6 +27,7 @@ class StopwatchEngine : public QObject
 
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(qint64 elapsedMs READ elapsedMs NOTIFY elapsedChanged)
+    Q_PROPERTY(QDateTime startedAt READ startedAt NOTIFY stateChanged)
     Q_PROPERTY(LapsModel *laps READ laps CONSTANT)
 
 public:
@@ -42,6 +44,9 @@ public:
 
     State state() const;
     qint64 elapsedMs() const;
+    // When the stopwatch was started from zero; invalid while stopped.
+    // Pausing and resuming do not change it.
+    QDateTime startedAt() const;
     LapsModel *laps() const;
 
     Q_INVOKABLE void start();
@@ -66,4 +71,5 @@ private:
     State m_state = Stopped;
     qint64 m_accumulatedMs = 0;
     qint64 m_startedAtMs = 0;
+    qint64 m_firstStartedAtMs = 0;
 };
