@@ -17,6 +17,7 @@ Kirigami.ApplicationWindow {
     minimumHeight: Kirigami.Units.gridUnit * 20
 
     required property StopwatchEngine stopwatch
+    readonly property string startedAtText: stopwatch.startedAt.toLocaleString(Qt.locale(), Locale.ShortFormat)
 
     Shortcut {
         sequence: "Space"
@@ -70,8 +71,10 @@ Kirigami.ApplicationWindow {
 
             Controls.Label {
                 Layout.alignment: Qt.AlignHCenter
-                text: i18nc("@info:status the stopwatch is paused", "Paused")
-                opacity: stopwatch.state === StopwatchEngine.Paused ? 0.7 : 0
+                text: stopwatch.state === StopwatchEngine.Paused
+                    ? i18nc("@info:status %1 is a date and time", "Paused · started %1", root.startedAtText)
+                    : i18nc("@info:status %1 is a date and time", "Started %1", root.startedAtText)
+                opacity: stopwatch.state === StopwatchEngine.Stopped ? 0 : 0.7
             }
 
             ListView {
