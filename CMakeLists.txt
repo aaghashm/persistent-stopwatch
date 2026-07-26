@@ -38,6 +38,7 @@ find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
     WindowSystem
 )
 ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
+ecm_find_qmlmodule(org.kde.coreaddons REQUIRED)
 
 add_subdirectory(src)
 if(BUILD_TESTING)

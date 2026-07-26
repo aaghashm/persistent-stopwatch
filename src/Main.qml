@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
+import org.kde.coreaddons as KCoreAddons
 import io.github.aaghashm.persistentstopwatch
 
 Kirigami.ApplicationWindow {
@@ -30,6 +31,31 @@ Kirigami.ApplicationWindow {
     Shortcut {
         sequence: "R"
         onActivated: stopwatch.reset()
+    }
+
+    globalDrawer: Kirigami.GlobalDrawer {
+        isMenu: true
+        actions: [
+            Kirigami.Action {
+                text: i18nc("@action:inmenu", "About Persistent Stopwatch")
+                icon.name: "help-about"
+                onTriggered: root.pageStack.pushDialogLayer(aboutPage)
+            },
+            Kirigami.Action {
+                text: i18nc("@action:inmenu", "Quit")
+                icon.name: "application-exit"
+                shortcut: StandardKey.Quit
+                onTriggered: Qt.quit()
+            }
+        ]
+    }
+
+    Component {
+        id: aboutPage
+
+        Kirigami.AboutPage {
+            aboutData: KCoreAddons.AboutData
+        }
     }
 
     pageStack.initialPage: Kirigami.Page {
