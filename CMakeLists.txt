@@ -41,6 +41,10 @@ ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 ecm_find_qmlmodule(org.kde.coreaddons REQUIRED)
 
 add_subdirectory(src)
+# Translations land in po/ once there are any; the template comes from src/Messages.sh.
+if(EXISTS ${CMAKE_SOURCE_DIR}/po)
+    ki18n_install(po)
+endif()
 if(BUILD_TESTING)
     add_subdirectory(autotests)
 endif()
