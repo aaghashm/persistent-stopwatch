@@ -16,8 +16,14 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMFindQmlModule)
 include(ECMInstallIcons)
+include(ECMSetupVersion)
 include(KDEClangFormat)
 include(KDEGitCommitHooks)
+
+ecm_setup_version(${PROJECT_VERSION}
+    VARIABLE_PREFIX PERSISTENTSTOPWATCH
+    VERSION_HEADER ${CMAKE_CURRENT_BINARY_DIR}/src/version.h
+)
 
 find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
     Core

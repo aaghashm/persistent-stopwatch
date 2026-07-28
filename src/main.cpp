@@ -18,6 +18,7 @@
 
 #include "commandline.h"
 #include "stopwatchengine.h"
+#include "version.h"
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
 
     KAboutData aboutData(u"persistentstopwatch"_s,
                          i18nc("@title application name", "Persistent Stopwatch"),
-                         u"0.1.0"_s,
+                         QStringLiteral(PERSISTENTSTOPWATCH_VERSION_STRING),
                          i18n("Stopwatch that keeps counting across restarts and reboots"),
                          KAboutLicense::GPL_V2,
                          i18n("© 2026 Aaghash Murugesan"));
