@@ -38,6 +38,27 @@ private Q_SLOTS:
         QVERIFY(!CommandLine::wantsStatus(*parser));
     }
 
+    void testNeedsWindow()
+    {
+        char program[] = "persistent-stopwatch";
+        char status[] = "--status";
+        char lap[] = "--lap";
+        char style[] = "-style";
+        char fusion[] = "fusion";
+
+        char *bare[] = {program};
+        QVERIFY(CommandLine::needsWindow(1, bare));
+
+        char *withStyle[] = {program, style, fusion};
+        QVERIFY(CommandLine::needsWindow(3, withStyle));
+
+        char *withStatus[] = {program, status};
+        QVERIFY(!CommandLine::needsWindow(2, withStatus));
+
+        char *withLap[] = {program, style, fusion, lap};
+        QVERIFY(!CommandLine::needsWindow(4, withLap));
+    }
+
     void testStartAndPause()
     {
         StopwatchEngine engine(clock());

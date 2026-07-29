@@ -15,6 +15,10 @@ namespace CommandLine
 {
 void addOptions(QCommandLineParser &parser);
 
+// Decided from the raw arguments, because it picks which kind of
+// application object to create, before a QCommandLineParser can exist.
+bool needsWindow(int argc, char *argv[]);
+
 bool hasAction(const QCommandLineParser &parser);
 bool wantsStatus(const QCommandLineParser &parser);
 

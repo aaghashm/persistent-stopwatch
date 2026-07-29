@@ -24,7 +24,10 @@ using namespace Qt::Literals::StringLiterals;
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    // Command line use has to work over SSH and on a text console, where a
+    // QApplication would abort for lack of a display. Only the window gets one.
+    const bool windowed = CommandLine::needsWindow(argc, argv);
+    std::unique_ptr<QCoreApplication> app(windowed ? new QApplication(argc, argv) : new QCoreApplication(argc, argv));
 
     KLocalizedString::setApplicationDomain(QByteArrayLiteral("persistentstopwatch"));
 
@@ -41,11 +44,8 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     CommandLine::addOptions(parser);
     aboutData.setupCommandLine(&parser);
-    parser.process(app);
+    parser.process(*app);
     aboutData.processCommandLine(&parser);
-
-    QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
-    QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
 
     // Reading needs no coordination: whoever owns the state syncs it to disk
     // on every change, so the file is always current.
@@ -71,6 +71,9 @@ int main(int argc, char *argv[])
         }
         return 0;
     }
+
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
+    QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
 
     // Without the org.kde.desktop style, QML controls fall back to the plain
     // Qt look and feel out of place on Plasma. Respect an explicit override.
@@ -98,5 +101,5 @@ int main(int argc, char *argv[])
         KWindowSystem::activateWindow(window);
     });
 
-    return app.exec();
+    return app->exec();
 }
