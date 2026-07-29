@@ -4,6 +4,7 @@
 #include "commandline.h"
 
 #include <QCommandLineParser>
+#include <QSet>
 
 #include <KLocalizedString>
 
@@ -29,6 +30,29 @@ void CommandLine::addOptions(QCommandLineParser &parser)
         {resetOption, i18nc("@info:shell", "Reset the stopwatch to zero and clear the laps.")},
         {statusOption, i18nc("@info:shell", "Print the state and elapsed time, then exit.")},
     });
+}
+
+bool CommandLine::needsWindow(int argc, char *argv[])
+{
+    static const QSet<QByteArray> headless = {
+        "--start",
+        "--pause",
+        "--lap",
+        "--reset",
+        "--status",
+        "-h",
+        "--help",
+        "-v",
+        "--version",
+        "--author",
+        "--license",
+    };
+    for (int i = 1; i < argc; ++i) {
+        if (headless.contains(QByteArray(argv[i]))) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool CommandLine::hasAction(const QCommandLineParser &parser)
