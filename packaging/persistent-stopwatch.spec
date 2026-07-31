@@ -52,7 +52,9 @@ persistent-stopwatch --start, --lap, --pause, --reset and --status.
 %autosetup -p1
 
 %conf
-%cmake_kf6
+# kf6-rpm-macros turn tests off by default; the engine tests are cheap
+# and the whole reason to trust the timekeeping, so run them.
+%cmake_kf6 -DBUILD_TESTING=ON
 
 %build
 %cmake_build
