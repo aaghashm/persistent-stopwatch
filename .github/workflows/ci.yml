@@ -53,3 +53,37 @@ jobs:
 
       - name: Formatting
         run: clang-format --dry-run --Werror src/*.cpp src/*.h autotests/*.cpp
+
+  rpm:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    steps:
+      - name: Install tools
+        run: dnf install -y --setopt=install_weak_deps=False git rpm-build rpmlint dnf-plugins-core
+
+      - uses: actions/checkout@v4
+
+      - name: Build the RPM from this commit
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          version=$(sed -n 's/^Version: *//p' packaging/persistent-stopwatch.spec)
+          mkdir -p ~/rpmbuild/SOURCES
+          git archive --prefix=persistent-stopwatch-$version/ -o ~/rpmbuild/SOURCES/persistent-stopwatch-$version.tar.gz HEAD
+          dnf builddep -y packaging/persistent-stopwatch.spec
+          rpmbuild -ba packaging/persistent-stopwatch.spec
+
+      - name: rpmlint
+        run: rpmlint -r packaging/persistent-stopwatch.rpmlintrc packaging/persistent-stopwatch.spec ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm
+
+      - name: Install it and run it
+        run: |
+          dnf install -y ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm
+          persistent-stopwatch --reset --start --status
+          persistent-stopwatch --pause --status
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm
+          path: |
+            ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm
+            ~/rpmbuild/SRPMS/*.rpm
