@@ -90,6 +90,16 @@ restarts and reboots, app icon, desktop integration files.
 0.1.0 is out. Next: controlling the stopwatch from the command line, and
 an RPM so it can be installed with dnf.
 
+## Installing
+
+On Fedora, download the RPM from the
+[latest release](https://github.com/aaghashm/persistent-stopwatch/releases/latest)
+and install it with dnf, which pulls in the KDE libraries it needs:
+
+```
+sudo dnf install ./persistent-stopwatch-*.rpm
+```
+
 ## Building from source
 
 Dependencies (Fedora):
