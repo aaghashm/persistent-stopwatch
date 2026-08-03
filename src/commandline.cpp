@@ -19,6 +19,7 @@ const QString pauseOption = u"pause"_s;
 const QString lapOption = u"lap"_s;
 const QString resetOption = u"reset"_s;
 const QString statusOption = u"status"_s;
+const QString lapsOption = u"laps"_s;
 }
 
 void CommandLine::addOptions(QCommandLineParser &parser)
@@ -29,6 +30,7 @@ void CommandLine::addOptions(QCommandLineParser &parser)
         {lapOption, i18nc("@info:shell", "Record a lap.")},
         {resetOption, i18nc("@info:shell", "Reset the stopwatch to zero and clear the laps.")},
         {statusOption, i18nc("@info:shell", "Print the state and elapsed time, then exit.")},
+        {lapsOption, i18nc("@info:shell", "Print the recorded laps, then exit.")},
     });
 }
 
@@ -40,6 +42,7 @@ bool CommandLine::needsWindow(int argc, char *argv[])
         "--lap",
         "--reset",
         "--status",
+        "--laps",
         "-h",
         "--help",
         "-v",
@@ -63,6 +66,11 @@ bool CommandLine::hasAction(const QCommandLineParser &parser)
 bool CommandLine::wantsStatus(const QCommandLineParser &parser)
 {
     return parser.isSet(statusOption);
+}
+
+bool CommandLine::wantsLaps(const QCommandLineParser &parser)
+{
+    return parser.isSet(lapsOption);
 }
 
 void CommandLine::applyActions(const QCommandLineParser &parser, StopwatchEngine &engine)
@@ -96,4 +104,17 @@ QString CommandLine::statusLine(const StopwatchEngine &engine)
         break;
     }
     return state + u' ' + engine.formatDuration(engine.elapsedMs());
+}
+
+QString CommandLine::lapsTable(const StopwatchEngine &engine)
+{
+    const LapsModel *laps = engine.laps();
+    QString table;
+    // The model shows the newest lap first; a table reads better oldest first.
+    for (int row = laps->rowCount() - 1; row >= 0; --row) {
+        const QModelIndex index = laps->index(row, 0);
+        table += QString::number(index.data(LapsModel::NumberRole).toInt()) + u'\t' + engine.formatDuration(index.data(LapsModel::SplitMsRole).toLongLong())
+            + u'\t' + engine.formatDuration(index.data(LapsModel::TotalMsRole).toLongLong()) + u'\n';
+    }
+    return table;
 }

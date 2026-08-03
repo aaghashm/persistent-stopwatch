@@ -106,6 +106,20 @@ private Q_SLOTS:
         QCOMPARE(CommandLine::statusLine(engine), u"Paused 00:01:01.5"_s);
     }
 
+    void testLapsTable()
+    {
+        StopwatchEngine engine(clock());
+        QCOMPARE(CommandLine::lapsTable(engine), QString());
+
+        engine.start();
+        m_fakeNowMs += 10000;
+        engine.lap();
+        m_fakeNowMs += 2500;
+        engine.lap();
+
+        QCOMPARE(CommandLine::lapsTable(engine), u"1\t00:00:10.0\t00:00:10.0\n2\t00:00:02.5\t00:00:12.5\n"_s);
+    }
+
 private:
     std::unique_ptr<QCommandLineParser> parse(const QStringList &flags)
     {
