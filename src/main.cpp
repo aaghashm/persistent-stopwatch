@@ -22,6 +22,17 @@
 
 using namespace Qt::Literals::StringLiterals;
 
+static void printReport(const QCommandLineParser &parser, const StopwatchEngine &stopwatch)
+{
+    QTextStream out(stdout);
+    if (CommandLine::wantsLaps(parser)) {
+        out << CommandLine::lapsTable(stopwatch);
+    }
+    if (CommandLine::wantsStatus(parser)) {
+        out << CommandLine::statusLine(stopwatch) << Qt::endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     // Command line use has to work over SSH and on a text console, where a
@@ -49,9 +60,9 @@ int main(int argc, char *argv[])
 
     // Reading needs no coordination: whoever owns the state syncs it to disk
     // on every change, so the file is always current.
-    if (CommandLine::wantsStatus(parser) && !CommandLine::hasAction(parser)) {
+    if ((CommandLine::wantsStatus(parser) || CommandLine::wantsLaps(parser)) && !CommandLine::hasAction(parser)) {
         const StopwatchEngine stopwatch;
-        QTextStream(stdout) << CommandLine::statusLine(stopwatch) << Qt::endl;
+        printReport(parser, stopwatch);
         return 0;
     }
 
@@ -66,9 +77,7 @@ int main(int argc, char *argv[])
     // actions and leave without ever showing a window.
     if (CommandLine::hasAction(parser)) {
         CommandLine::applyActions(parser, stopwatch);
-        if (CommandLine::wantsStatus(parser)) {
-            QTextStream(stdout) << CommandLine::statusLine(stopwatch) << Qt::endl;
-        }
+        printReport(parser, stopwatch);
         return 0;
     }
 
