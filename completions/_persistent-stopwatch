@@ -8,5 +8,6 @@ _arguments \
     '--lap[record a lap]' \
     '--reset[reset to zero and clear the laps]' \
     '--status[print the state and elapsed time]' \
+    '--laps[print the recorded laps]' \
     '(- *)'{-h,--help}'[show help]' \
     '(- *)'{-v,--version}'[show version]'
