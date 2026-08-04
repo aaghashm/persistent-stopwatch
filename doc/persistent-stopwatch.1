@@ -5,7 +5,7 @@
 persistent-stopwatch \- a stopwatch that keeps counting across restarts and reboots
 .SH SYNOPSIS
 .B persistent-stopwatch
-[\fB\-\-start\fR] [\fB\-\-pause\fR] [\fB\-\-lap\fR] [\fB\-\-reset\fR] [\fB\-\-status\fR]
+[\fB\-\-start\fR] [\fB\-\-pause\fR] [\fB\-\-lap\fR] [\fB\-\-reset\fR] [\fB\-\-status\fR] [\fB\-\-laps\fR]
 .SH DESCRIPTION
 Without options, opens the stopwatch window.
 If the window is already open, it is raised instead of opening a second one.
@@ -31,6 +31,10 @@ Reset the stopwatch to zero and clear all laps.
 Print the state and the elapsed time, for example
 .BR "Running 00:12:03.4" ,
 then exit.
+.TP
+.B \-\-laps
+Print the recorded laps, oldest first, one per line: the lap number, the
+lap's own time and the total elapsed time, separated by tabs.
 .PP
 Action options can be combined. They are applied in the order reset, start,
 lap, pause, so
@@ -51,6 +55,14 @@ Time a long build:
 persistent-stopwatch \-\-reset \-\-start
 make
 persistent-stopwatch \-\-pause \-\-status
+.fi
+.RE
+.PP
+Get the fastest lap from a run:
+.PP
+.RS
+.nf
+persistent-stopwatch \-\-laps | sort \-t "$(printf '\\t')" \-k2 | head \-1
 .fi
 .RE
 .SH BUGS

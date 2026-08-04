@@ -4,6 +4,6 @@
 _persistent_stopwatch()
 {
     local cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=($(compgen -W '--start --pause --lap --reset --status --help --version' -- "$cur"))
+    COMPREPLY=($(compgen -W '--start --pause --lap --reset --status --laps --help --version' -- "$cur"))
 }
 complete -F _persistent_stopwatch persistent-stopwatch
