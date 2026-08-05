@@ -22,6 +22,7 @@ SPDX-License-Identifier: CC0-1.0
       <li>Lap times with per-lap splits and running totals</li>
       <li>Keyboard shortcuts: Space to start and pause, L for lap, R to reset</li>
       <li>Native Plasma look and feel, built with Kirigami</li>
+      <li>Works from the command line too: start, pause, lap, reset and print the status without opening a window</li>
     </ul>
   </description>
   <developer id="io.github.aaghashm">
@@ -31,6 +32,15 @@ SPDX-License-Identifier: CC0-1.0
   <url type="homepage">https://github.com/aaghashm/persistent-stopwatch</url>
   <url type="bugtracker">https://github.com/aaghashm/persistent-stopwatch/issues</url>
   <url type="vcs-browser">https://github.com/aaghashm/persistent-stopwatch</url>
+  <provides>
+    <binary>persistent-stopwatch</binary>
+  </provides>
+  <keywords>
+    <keyword>stopwatch</keyword>
+    <keyword>timer</keyword>
+    <keyword>chronometer</keyword>
+    <keyword>lap</keyword>
+  </keywords>
   <categories>
     <category>Utility</category>
   </categories>

@@ -9,6 +9,7 @@ Icon=io.github.aaghashm.persistentstopwatch
 Type=Application
 Terminal=false
 Categories=Qt;KDE;Utility;
+Keywords=stopwatch;timer;chronometer;lap;
 Actions=Start;Pause;Lap;Reset;
 
 [Desktop Action Start]
