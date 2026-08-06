@@ -99,11 +99,12 @@ private Q_SLOTS:
         QCOMPARE(CommandLine::statusLine(engine), u"Stopped 00:00:00.0"_s);
 
         engine.start();
+        const QString started = QDateTime::fromMSecsSinceEpoch(m_fakeNowMs).toString(Qt::ISODate);
         m_fakeNowMs += 61500;
-        QCOMPARE(CommandLine::statusLine(engine), u"Running 00:01:01.5"_s);
+        QCOMPARE(CommandLine::statusLine(engine), u"Running 00:01:01.5 (started %1)"_s.arg(started));
 
         engine.pause();
-        QCOMPARE(CommandLine::statusLine(engine), u"Paused 00:01:01.5"_s);
+        QCOMPARE(CommandLine::statusLine(engine), u"Paused 00:01:01.5 (started %1)"_s.arg(started));
     }
 
     void testLapsTable()

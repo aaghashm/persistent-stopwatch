@@ -103,7 +103,11 @@ QString CommandLine::statusLine(const StopwatchEngine &engine)
         state = i18nc("@info:shell stopwatch state", "Stopped");
         break;
     }
-    return state + u' ' + engine.formatDuration(engine.elapsedMs());
+    QString line = state + u' ' + engine.formatDuration(engine.elapsedMs());
+    if (engine.startedAt().isValid()) {
+        line += u' ' + i18nc("@info:shell %1 is an ISO 8601 date and time", "(started %1)", engine.startedAt().toString(Qt::ISODate));
+    }
+    return line;
 }
 
 QString CommandLine::lapsTable(const StopwatchEngine &engine)
