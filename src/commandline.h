@@ -27,7 +27,8 @@ bool wantsLaps(const QCommandLineParser &parser);
 // restarts from zero no matter how the flags were written.
 void applyActions(const QCommandLineParser &parser, StopwatchEngine &engine);
 
-// One line, e.g. "Running 00:12:03.4", meant for a terminal or a status bar.
+// One line, e.g. "Running 00:12:03.4 (started 2026-08-06T09:12:44)",
+// meant for a terminal or a status bar.
 QString statusLine(const StopwatchEngine &engine);
 
 // Oldest lap first, one per line: number, split and total, tab separated
