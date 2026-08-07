@@ -35,6 +35,9 @@ like KClock do it.
 - Elapsed time survives application restarts and full system reboots
 - Lap times with per-lap splits and running totals
 - Keyboard shortcuts: **Space** start/pause · **L** lap · **R** reset
+- Shows when the current run was started
+- Full command line control, no window needed, works over SSH
+- Start, pause, lap and reset from the launcher's right-click menu
 - Native Plasma look and feel, including your system fonts and icon theme
 
 ## Command line
@@ -87,8 +90,8 @@ environments and app stores read: the launcher entry and the store listing.
 Working: the engine with unit tests, the Kirigami UI, persistence across
 restarts and reboots, app icon, desktop integration files.
 
-0.1.0 is out. Next: controlling the stopwatch from the command line, and
-an RPM so it can be installed with dnf.
+Usable day to day. Next: lap statistics, copying laps, undo for an
+accidental reset.
 
 ## Installing
 
