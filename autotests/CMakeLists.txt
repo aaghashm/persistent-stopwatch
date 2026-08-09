@@ -6,6 +6,7 @@ include(ECMAddTests)
 ecm_add_test(
     stopwatchenginetest.cpp
     ../src/stopwatchengine.cpp
+    ../src/duration.cpp
     ../src/lapsmodel.cpp
     TEST_NAME stopwatchenginetest
     LINK_LIBRARIES
@@ -19,6 +20,7 @@ ecm_add_test(
     commandlinetest.cpp
     ../src/commandline.cpp
     ../src/stopwatchengine.cpp
+    ../src/duration.cpp
     ../src/lapsmodel.cpp
     TEST_NAME commandlinetest
     LINK_LIBRARIES

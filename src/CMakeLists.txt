@@ -14,6 +14,8 @@ ecm_add_qml_module(persistent-stopwatch
 target_sources(persistent-stopwatch PRIVATE
     commandline.cpp
     commandline.h
+    duration.cpp
+    duration.h
     lapsmodel.cpp
     lapsmodel.h
     main.cpp

@@ -8,6 +8,8 @@
 #include <KConfigGroup>
 #include <KSharedConfig>
 
+#include "duration.h"
+
 using namespace Qt::Literals::StringLiterals;
 
 namespace
@@ -120,11 +122,7 @@ void StopwatchEngine::lap()
 
 QString StopwatchEngine::formatDuration(qint64 ms) const
 {
-    const qint64 totalSeconds = ms / 1000;
-    return u"%1:%2:%3.%4"_s.arg(totalSeconds / 3600, 2, 10, QLatin1Char('0'))
-        .arg((totalSeconds / 60) % 60, 2, 10, QLatin1Char('0'))
-        .arg(totalSeconds % 60, 2, 10, QLatin1Char('0'))
-        .arg((ms / 100) % 10);
+    return Duration::format(ms);
 }
 
 void StopwatchEngine::setState(State state)
