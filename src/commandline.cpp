@@ -8,6 +8,7 @@
 
 #include <KLocalizedString>
 
+#include "duration.h"
 #include "stopwatchengine.h"
 
 using namespace Qt::Literals::StringLiterals;
@@ -103,7 +104,7 @@ QString CommandLine::statusLine(const StopwatchEngine &engine)
         state = i18nc("@info:shell stopwatch state", "Stopped");
         break;
     }
-    QString line = state + u' ' + engine.formatDuration(engine.elapsedMs());
+    QString line = state + u' ' + Duration::format(engine.elapsedMs());
     if (engine.startedAt().isValid()) {
         line += u' ' + i18nc("@info:shell %1 is an ISO 8601 date and time", "(started %1)", engine.startedAt().toString(Qt::ISODate));
     }
@@ -117,8 +118,8 @@ QString CommandLine::lapsTable(const StopwatchEngine &engine)
     // The model shows the newest lap first; a table reads better oldest first.
     for (int row = laps->rowCount() - 1; row >= 0; --row) {
         const QModelIndex index = laps->index(row, 0);
-        table += QString::number(index.data(LapsModel::NumberRole).toInt()) + u'\t' + engine.formatDuration(index.data(LapsModel::SplitMsRole).toLongLong())
-            + u'\t' + engine.formatDuration(index.data(LapsModel::TotalMsRole).toLongLong()) + u'\n';
+        table += QString::number(index.data(LapsModel::NumberRole).toInt()) + u'\t' + Duration::format(index.data(LapsModel::SplitMsRole).toLongLong()) + u'\t'
+            + Duration::format(index.data(LapsModel::TotalMsRole).toLongLong()) + u'\n';
     }
     return table;
 }
