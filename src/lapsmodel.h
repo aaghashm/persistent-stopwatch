@@ -23,6 +23,8 @@ public:
         NumberRole = Qt::UserRole + 1,
         SplitMsRole,
         TotalMsRole,
+        IsFastestRole,
+        IsSlowestRole,
     };
 
     explicit LapsModel(QObject *parent = nullptr);
@@ -38,6 +40,11 @@ public:
     void restore(const QStringList &totals);
 
 private:
+    qint64 splitAt(qsizetype i) const;
+    // Both -1 until there are at least two laps to compare.
+    qsizetype fastestIndex() const;
+    qsizetype slowestIndex() const;
+
     // Chronological; row 0 of the model maps to the last entry.
     QList<qint64> m_totals;
 };

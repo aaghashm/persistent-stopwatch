@@ -28,9 +28,13 @@ QVariant LapsModel::data(const QModelIndex &index, int role) const
     case NumberRole:
         return i + 1;
     case SplitMsRole:
-        return m_totals.at(i) - (i > 0 ? m_totals.at(i - 1) : 0);
+        return splitAt(i);
     case TotalMsRole:
         return m_totals.at(i);
+    case IsFastestRole:
+        return i == fastestIndex();
+    case IsSlowestRole:
+        return i == slowestIndex();
     default:
         return {};
     }
@@ -42,7 +46,42 @@ QHash<int, QByteArray> LapsModel::roleNames() const
         {NumberRole, QByteArrayLiteral("number")},
         {SplitMsRole, QByteArrayLiteral("splitMs")},
         {TotalMsRole, QByteArrayLiteral("totalMs")},
+        {IsFastestRole, QByteArrayLiteral("isFastest")},
+        {IsSlowestRole, QByteArrayLiteral("isSlowest")},
     };
+}
+
+qint64 LapsModel::splitAt(qsizetype i) const
+{
+    return m_totals.at(i) - (i > 0 ? m_totals.at(i - 1) : 0);
+}
+
+qsizetype LapsModel::fastestIndex() const
+{
+    if (m_totals.size() < 2) {
+        return -1;
+    }
+    qsizetype best = 0;
+    for (qsizetype i = 1; i < m_totals.size(); ++i) {
+        if (splitAt(i) < splitAt(best)) {
+            best = i;
+        }
+    }
+    return best;
+}
+
+qsizetype LapsModel::slowestIndex() const
+{
+    if (m_totals.size() < 2) {
+        return -1;
+    }
+    qsizetype worst = 0;
+    for (qsizetype i = 1; i < m_totals.size(); ++i) {
+        if (splitAt(i) > splitAt(worst)) {
+            worst = i;
+        }
+    }
+    return worst;
 }
 
 void LapsModel::addLap(qint64 totalMs)
