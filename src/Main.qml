@@ -112,9 +112,13 @@ Kirigami.ApplicationWindow {
                 model: stopwatch.laps
 
                 delegate: Controls.ItemDelegate {
+                    id: lapDelegate
+
                     required property int number
                     required property double splitMs
                     required property double totalMs
+                    required property bool isFastest
+                    required property bool isSlowest
 
                     width: ListView.view.width
 
@@ -131,6 +135,9 @@ Kirigami.ApplicationWindow {
                         Controls.Label {
                             text: "+" + stopwatch.formatDuration(splitMs)
                             font.family: Kirigami.Theme.fixedWidthFont.family
+                            color: lapDelegate.isFastest ? Kirigami.Theme.positiveTextColor
+                                 : lapDelegate.isSlowest ? Kirigami.Theme.negativeTextColor
+                                 : Kirigami.Theme.textColor
                         }
                         Controls.Label {
                             text: stopwatch.formatDuration(totalMs)
