@@ -89,6 +89,11 @@ void LapsModel::addLap(qint64 totalMs)
     beginInsertRows(QModelIndex(), 0, 0);
     m_totals.append(totalMs);
     endInsertRows();
+
+    // The new lap can take the fastest or slowest mark from an older one.
+    if (m_totals.size() > 1) {
+        Q_EMIT dataChanged(index(1, 0), index(rowCount() - 1, 0), {IsFastestRole, IsSlowestRole});
+    }
 }
 
 void LapsModel::clear()
