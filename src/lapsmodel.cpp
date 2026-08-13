@@ -3,6 +3,8 @@
 
 #include "lapsmodel.h"
 
+#include "duration.h"
+
 LapsModel::LapsModel(QObject *parent)
     : QAbstractListModel(parent)
 {
@@ -104,6 +106,15 @@ void LapsModel::clear()
     beginResetModel();
     m_totals.clear();
     endResetModel();
+}
+
+QString LapsModel::toTable() const
+{
+    QString table;
+    for (qsizetype i = 0; i < m_totals.size(); ++i) {
+        table += QString::number(i + 1) + u'\t' + Duration::format(splitAt(i)) + u'\t' + Duration::format(m_totals.at(i)) + u'\n';
+    }
+    return table;
 }
 
 QStringList LapsModel::serialized() const

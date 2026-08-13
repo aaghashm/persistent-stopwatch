@@ -26,7 +26,7 @@ static void printReport(const QCommandLineParser &parser, const StopwatchEngine 
 {
     QTextStream out(stdout);
     if (CommandLine::wantsLaps(parser)) {
-        out << CommandLine::lapsTable(stopwatch);
+        out << stopwatch.laps()->toTable();
     }
     if (CommandLine::wantsStatus(parser)) {
         out << CommandLine::statusLine(stopwatch) << Qt::endl;

@@ -31,7 +31,4 @@ void applyActions(const QCommandLineParser &parser, StopwatchEngine &engine);
 // meant for a terminal or a status bar.
 QString statusLine(const StopwatchEngine &engine);
 
-// Oldest lap first, one per line: number, split and total, tab separated
-// so it pastes straight into a spreadsheet or `cut -f`.
-QString lapsTable(const StopwatchEngine &engine);
 }

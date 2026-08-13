@@ -36,6 +36,10 @@ public:
     void addLap(qint64 totalMs);
     void clear();
 
+    // Oldest lap first, one per line: number, split and total, tab
+    // separated so it pastes straight into a spreadsheet or `cut -f`.
+    QString toTable() const;
+
     QStringList serialized() const;
     void restore(const QStringList &totals);
 

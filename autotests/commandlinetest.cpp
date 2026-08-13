@@ -110,7 +110,7 @@ private Q_SLOTS:
     void testLapsTable()
     {
         StopwatchEngine engine(clock());
-        QCOMPARE(CommandLine::lapsTable(engine), QString());
+        QCOMPARE(engine.laps()->toTable(), QString());
 
         engine.start();
         m_fakeNowMs += 10000;
@@ -118,7 +118,7 @@ private Q_SLOTS:
         m_fakeNowMs += 2500;
         engine.lap();
 
-        QCOMPARE(CommandLine::lapsTable(engine), u"1\t00:00:10.0\t00:00:10.0\n2\t00:00:02.5\t00:00:12.5\n"_s);
+        QCOMPARE(engine.laps()->toTable(), u"1\t00:00:10.0\t00:00:10.0\n2\t00:00:02.5\t00:00:12.5\n"_s);
     }
 
 private:

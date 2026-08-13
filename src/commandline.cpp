@@ -110,16 +110,3 @@ QString CommandLine::statusLine(const StopwatchEngine &engine)
     }
     return line;
 }
-
-QString CommandLine::lapsTable(const StopwatchEngine &engine)
-{
-    const LapsModel *laps = engine.laps();
-    QString table;
-    // The model shows the newest lap first; a table reads better oldest first.
-    for (int row = laps->rowCount() - 1; row >= 0; --row) {
-        const QModelIndex index = laps->index(row, 0);
-        table += QString::number(index.data(LapsModel::NumberRole).toInt()) + u'\t' + Duration::format(index.data(LapsModel::SplitMsRole).toLongLong()) + u'\t'
-            + Duration::format(index.data(LapsModel::TotalMsRole).toLongLong()) + u'\n';
-    }
-    return table;
-}

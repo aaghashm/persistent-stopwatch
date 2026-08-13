@@ -34,6 +34,7 @@ target_include_directories(commandlinetest PRIVATE ../src)
 ecm_add_test(
     lapsmodeltest.cpp
     ../src/lapsmodel.cpp
+    ../src/duration.cpp
     TEST_NAME lapsmodeltest
     LINK_LIBRARIES
         # QAbstractItemModelTester probes the decoration role for QPixmap.
