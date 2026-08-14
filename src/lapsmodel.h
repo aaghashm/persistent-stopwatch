@@ -39,6 +39,7 @@ public:
     // Oldest lap first, one per line: number, split and total, tab
     // separated so it pastes straight into a spreadsheet or `cut -f`.
     QString toTable() const;
+    Q_INVOKABLE void copyToClipboard() const;
 
     QStringList serialized() const;
     void restore(const QStringList &totals);

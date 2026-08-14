@@ -76,6 +76,16 @@ Kirigami.ApplicationWindow {
                 onTriggered: stopwatch.lap()
             },
             Kirigami.Action {
+                text: i18nc("@action:button", "Copy Laps")
+                icon.name: "edit-copy"
+                displayHint: Kirigami.DisplayHint.AlwaysHide
+                enabled: lapsView.count > 0
+                onTriggered: {
+                    stopwatch.laps.copyToClipboard()
+                    root.showPassiveNotification(i18nc("@info:status", "Laps copied to the clipboard"))
+                }
+            },
+            Kirigami.Action {
                 text: i18nc("@action:button reset the stopwatch to zero", "Reset")
                 icon.name: "chronometer-reset"
                 enabled: stopwatch.state !== StopwatchEngine.Stopped

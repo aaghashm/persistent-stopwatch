@@ -3,6 +3,9 @@
 
 #include "lapsmodel.h"
 
+#include <QClipboard>
+#include <QGuiApplication>
+
 #include "duration.h"
 
 LapsModel::LapsModel(QObject *parent)
@@ -115,6 +118,11 @@ QString LapsModel::toTable() const
         table += QString::number(i + 1) + u'\t' + Duration::format(splitAt(i)) + u'\t' + Duration::format(m_totals.at(i)) + u'\n';
     }
     return table;
+}
+
+void LapsModel::copyToClipboard() const
+{
+    QGuiApplication::clipboard()->setText(toTable());
 }
 
 QStringList LapsModel::serialized() const

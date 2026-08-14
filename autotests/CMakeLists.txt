@@ -10,6 +10,7 @@ ecm_add_test(
     ../src/lapsmodel.cpp
     TEST_NAME stopwatchenginetest
     LINK_LIBRARIES
+        Qt6::Gui
         Qt6::Qml
         Qt6::Test
         KF6::ConfigCore
@@ -24,6 +25,7 @@ ecm_add_test(
     ../src/lapsmodel.cpp
     TEST_NAME commandlinetest
     LINK_LIBRARIES
+        Qt6::Gui
         Qt6::Qml
         Qt6::Test
         KF6::ConfigCore
