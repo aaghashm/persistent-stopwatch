@@ -9,6 +9,7 @@
 #include <qqmlregistration.h>
 
 #include <functional>
+#include <optional>
 
 #include "lapsmodel.h"
 
@@ -29,6 +30,7 @@ class StopwatchEngine : public QObject
     Q_PROPERTY(qint64 elapsedMs READ elapsedMs NOTIFY elapsedChanged)
     Q_PROPERTY(QDateTime startedAt READ startedAt NOTIFY stateChanged)
     Q_PROPERTY(LapsModel *laps READ laps CONSTANT)
+    Q_PROPERTY(bool canUndoReset READ canUndoReset NOTIFY canUndoResetChanged)
 
 public:
     enum State {
@@ -48,20 +50,34 @@ public:
     // Pausing and resuming do not change it.
     QDateTime startedAt() const;
     LapsModel *laps() const;
+    bool canUndoReset() const;
 
     Q_INVOKABLE void start();
     Q_INVOKABLE void pause();
     Q_INVOKABLE void reset();
     Q_INVOKABLE void lap();
+    // Brings back exactly what the last reset threw away, as if it never
+    // happened. Only possible until the next start, pause or lap.
+    Q_INVOKABLE void undoReset();
 
     Q_INVOKABLE QString formatDuration(qint64 ms) const;
 
 Q_SIGNALS:
     void stateChanged();
     void elapsedChanged();
+    void canUndoResetChanged();
 
 private:
+    struct Snapshot {
+        State state;
+        qint64 accumulatedMs;
+        qint64 startedAtMs;
+        qint64 firstStartedAtMs;
+        QStringList laps;
+    };
+
     void saveState() const;
+    void dropUndo();
     void restoreState();
     void setState(State state);
 
@@ -72,4 +88,5 @@ private:
     qint64 m_accumulatedMs = 0;
     qint64 m_startedAtMs = 0;
     qint64 m_firstStartedAtMs = 0;
+    std::optional<Snapshot> m_beforeReset;
 };
