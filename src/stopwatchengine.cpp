@@ -71,11 +71,17 @@ LapsModel *StopwatchEngine::laps() const
     return m_laps;
 }
 
+bool StopwatchEngine::canUndoReset() const
+{
+    return m_beforeReset.has_value();
+}
+
 void StopwatchEngine::start()
 {
     if (m_state == Running) {
         return;
     }
+    dropUndo();
     m_startedAtMs = m_now();
     if (m_state == Stopped) {
         m_firstStartedAtMs = m_startedAtMs;
@@ -91,6 +97,7 @@ void StopwatchEngine::pause()
     if (m_state != Running) {
         return;
     }
+    dropUndo();
     m_accumulatedMs = elapsedMs();
     m_startedAtMs = 0;
     setState(Paused);
@@ -101,6 +108,12 @@ void StopwatchEngine::pause()
 
 void StopwatchEngine::reset()
 {
+    if (m_state == Stopped) {
+        return;
+    }
+    m_beforeReset = Snapshot{m_state, m_accumulatedMs, m_startedAtMs, m_firstStartedAtMs, m_laps->serialized()};
+    Q_EMIT canUndoResetChanged();
+
     m_ticker.stop();
     m_accumulatedMs = 0;
     m_startedAtMs = 0;
@@ -116,8 +129,36 @@ void StopwatchEngine::lap()
     if (m_state != Running) {
         return;
     }
+    dropUndo();
     m_laps->addLap(elapsedMs());
     saveState();
+}
+
+void StopwatchEngine::undoReset()
+{
+    if (!m_beforeReset) {
+        return;
+    }
+    const Snapshot snapshot = *std::exchange(m_beforeReset, std::nullopt);
+    m_accumulatedMs = snapshot.accumulatedMs;
+    m_startedAtMs = snapshot.startedAtMs;
+    m_firstStartedAtMs = snapshot.firstStartedAtMs;
+    m_laps->restore(snapshot.laps);
+    setState(snapshot.state);
+    if (m_state == Running) {
+        m_ticker.start();
+    }
+    saveState();
+    Q_EMIT canUndoResetChanged();
+    Q_EMIT elapsedChanged();
+}
+
+void StopwatchEngine::dropUndo()
+{
+    if (m_beforeReset) {
+        m_beforeReset.reset();
+        Q_EMIT canUndoResetChanged();
+    }
 }
 
 QString StopwatchEngine::formatDuration(qint64 ms) const

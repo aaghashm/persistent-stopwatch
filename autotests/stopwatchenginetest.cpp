@@ -84,6 +84,76 @@ private Q_SLOTS:
         QCOMPARE(engine.laps()->rowCount(), 0);
     }
 
+    void testUndoResetWhileRunning()
+    {
+        StopwatchEngine engine(clock());
+        engine.start();
+        m_fakeNowMs += 4000;
+        engine.lap();
+        m_fakeNowMs += 1000;
+
+        engine.reset();
+        QVERIFY(engine.canUndoReset());
+        m_fakeNowMs += 2000;
+
+        // As if the reset never happened: the time spent since counts too.
+        engine.undoReset();
+        QCOMPARE(engine.state(), StopwatchEngine::Running);
+        QCOMPARE(engine.elapsedMs(), 7000);
+        QCOMPARE(engine.laps()->rowCount(), 1);
+        QVERIFY(!engine.canUndoReset());
+    }
+
+    void testUndoResetWhilePaused()
+    {
+        StopwatchEngine engine(clock());
+        engine.start();
+        m_fakeNowMs += 4000;
+        engine.pause();
+        engine.reset();
+        m_fakeNowMs += 9000;
+
+        engine.undoReset();
+        QCOMPARE(engine.state(), StopwatchEngine::Paused);
+        QCOMPARE(engine.elapsedMs(), 4000);
+    }
+
+    void testUndoResetGoneAfterStart()
+    {
+        StopwatchEngine engine(clock());
+        engine.start();
+        m_fakeNowMs += 4000;
+        engine.reset();
+        engine.start();
+        QVERIFY(!engine.canUndoReset());
+
+        engine.undoReset();
+        QCOMPARE(engine.elapsedMs(), 0);
+    }
+
+    void testUndoResetIsSaved()
+    {
+        {
+            StopwatchEngine engine(clock());
+            engine.start();
+            m_fakeNowMs += 4000;
+            engine.pause();
+            engine.reset();
+            engine.undoReset();
+        }
+
+        StopwatchEngine restored(clock());
+        QCOMPARE(restored.state(), StopwatchEngine::Paused);
+        QCOMPARE(restored.elapsedMs(), 4000);
+    }
+
+    void testResetWhenStoppedIsNotUndoable()
+    {
+        StopwatchEngine engine(clock());
+        engine.reset();
+        QVERIFY(!engine.canUndoReset());
+    }
+
     void testLapsRecordSplitsAndTotals()
     {
         StopwatchEngine engine(clock());
