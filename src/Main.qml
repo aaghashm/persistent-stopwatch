@@ -30,7 +30,20 @@ Kirigami.ApplicationWindow {
     }
     Shortcut {
         sequence: "R"
-        onActivated: stopwatch.reset()
+        onActivated: root.resetWithUndo()
+    }
+    Shortcut {
+        sequence: StandardKey.Undo
+        onActivated: stopwatch.undoReset()
+    }
+
+    function resetWithUndo() {
+        if (stopwatch.state === StopwatchEngine.Stopped) {
+            return;
+        }
+        stopwatch.reset();
+        showPassiveNotification(i18nc("@info:status", "Stopwatch reset"), "long",
+                                i18nc("@action:button", "Undo"), () => stopwatch.undoReset());
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -89,7 +102,7 @@ Kirigami.ApplicationWindow {
                 text: i18nc("@action:button reset the stopwatch to zero", "Reset")
                 icon.name: "chronometer-reset"
                 enabled: stopwatch.state !== StopwatchEngine.Stopped
-                onTriggered: stopwatch.reset()
+                onTriggered: root.resetWithUndo()
             }
         ]
 
