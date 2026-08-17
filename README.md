@@ -33,7 +33,9 @@ like KClock do it.
 ## Features
 
 - Elapsed time survives application restarts and full system reboots
-- Lap times with per-lap splits and running totals
+- Lap times with per-lap splits and running totals; the fastest lap is
+  green, the slowest red; copy them all as a table
+- Undo an accidental reset (**Ctrl+Z**), laps included
 - Keyboard shortcuts: **Space** start/pause · **L** lap · **R** reset
 - Shows when the current run was started
 - Full command line control, no window needed, works over SSH
@@ -62,9 +64,10 @@ src/
                             Running, Paused) that persists timestamps
                             through KConfig and derives elapsed time on
                             demand. Knows nothing about the UI.
-  lapsmodel.{h,cpp}         QAbstractListModel holding lap totals. Splits
-                            are computed from consecutive totals. Restored
-                            data is sanity-checked before use.
+  lapsmodel.{h,cpp}         QAbstractListModel holding lap totals. Splits,
+                            fastest and slowest are derived from them.
+                            Restored data is sanity-checked before use.
+  duration.{h,cpp}          The hh:mm:ss.t format used everywhere.
   Main.qml                  The whole UI: one Kirigami page with the time
                             display, actions, and the lap list.
   commandline.{h,cpp}       The --start/--pause/--lap/--reset/--status
@@ -76,6 +79,8 @@ autotests/
                             injectable clock, so tests simulate restarts,
                             reboots, and clocks that jump backwards without
                             ever sleeping.
+  lapsmodeltest.cpp         Lap marks, ties, and model consistency.
+  commandlinetest.cpp       Flag handling and output formats.
 icons/                      The app icon (Breeze-style SVG).
 doc/                        Man page.
 completions/                bash, zsh and fish completions.
@@ -90,8 +95,8 @@ environments and app stores read: the launcher entry and the store listing.
 Working: the engine with unit tests, the Kirigami UI, persistence across
 restarts and reboots, app icon, desktop integration files.
 
-Usable day to day. Next: lap statistics, copying laps, undo for an
-accidental reset.
+Usable day to day. Next: packages for Debian and Ubuntu, screenshots and
+a small website.
 
 ## Installing
 
