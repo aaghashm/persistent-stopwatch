@@ -68,3 +68,18 @@ install(FILES completions/persistent-stopwatch.fish DESTINATION ${KDE_INSTALL_DA
 file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES src/*.cpp src/*.h autotests/*.cpp)
 kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
 kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
+
+# A .deb for Debian 13, Ubuntu 25.04 and newer: `cpack -G DEB` in the build
+# directory. Fedora uses the spec in packaging/ instead.
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_VENDOR "Aaghash Murugesan")
+set(CPACK_PACKAGE_CONTACT "Aaghash Murugesan <aaghashm@gmail.com>")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Stopwatch that survives reboots")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/aaghashm/persistent-stopwatch")
+set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+set(CPACK_DEBIAN_PACKAGE_SECTION utils)
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+# QML modules are loaded at runtime, so dpkg-shlibdeps can't find them.
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "qml6-module-org-kde-kirigami, qml6-module-org-kde-coreaddons, qml6-module-qtquick-controls, qml6-module-qtquick-layouts, qml6-module-qtquick-templates, qml6-module-qtquick-window, qml6-module-qtqml-workerscript")
+set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "qml6-module-org-kde-desktop")
+include(CPack)
