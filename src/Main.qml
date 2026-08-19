@@ -18,6 +18,9 @@ Kirigami.ApplicationWindow {
     minimumHeight: Kirigami.Units.gridUnit * 20
 
     required property StopwatchEngine stopwatch
+    // Kirigami.Theme.fixedWidthFont is missing in older Kirigami (Debian 13
+    // ships 6.13), and without a fixed-width font the digits jiggle.
+    readonly property string monospaceFamily: Kirigami.Theme.fixedWidthFont ? Kirigami.Theme.fixedWidthFont.family : "monospace"
     readonly property string startedAtText: stopwatch.startedAt.toLocaleString(Qt.locale(), Locale.ShortFormat)
 
     Shortcut {
@@ -114,7 +117,7 @@ Kirigami.ApplicationWindow {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Kirigami.Units.gridUnit
                 text: stopwatch.formatDuration(stopwatch.elapsedMs)
-                font.family: Kirigami.Theme.fixedWidthFont.family
+                font.family: root.monospaceFamily
                 font.pointSize: Kirigami.Theme.defaultFont.pointSize * 4
             }
 
@@ -157,14 +160,14 @@ Kirigami.ApplicationWindow {
                         }
                         Controls.Label {
                             text: "+" + stopwatch.formatDuration(splitMs)
-                            font.family: Kirigami.Theme.fixedWidthFont.family
+                            font.family: root.monospaceFamily
                             color: lapDelegate.isFastest ? Kirigami.Theme.positiveTextColor
                                  : lapDelegate.isSlowest ? Kirigami.Theme.negativeTextColor
                                  : Kirigami.Theme.textColor
                         }
                         Controls.Label {
                             text: stopwatch.formatDuration(totalMs)
-                            font.family: Kirigami.Theme.fixedWidthFont.family
+                            font.family: root.monospaceFamily
                         }
                     }
                 }
