@@ -36,7 +36,7 @@ Kirigami.ApplicationWindow {
         onActivated: root.resetWithUndo()
     }
     Shortcut {
-        sequence: StandardKey.Undo
+        sequences: [StandardKey.Undo]
         onActivated: stopwatch.undoReset()
     }
 
