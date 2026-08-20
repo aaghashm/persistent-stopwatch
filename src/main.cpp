@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QFile>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
@@ -21,6 +22,16 @@
 #include "version.h"
 
 using namespace Qt::Literals::StringLiterals;
+
+// The style ships separately (only recommended on Debian), and asking for
+// a style that isn't installed stops the window from loading at all.
+static bool hasDesktopStyle(const QQmlEngine &engine)
+{
+    const QStringList importPaths = engine.importPathList();
+    return std::any_of(importPaths.cbegin(), importPaths.cend(), [](const QString &path) {
+        return QFile::exists(path + u"/org/kde/desktop/qmldir"_s);
+    });
+}
 
 static void printReport(const QCommandLineParser &parser, const StopwatchEngine &stopwatch)
 {
@@ -84,13 +95,13 @@ int main(int argc, char *argv[])
     QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
     QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
 
+    QQmlApplicationEngine engine;
+
     // Without the org.kde.desktop style, QML controls fall back to the plain
     // Qt look and feel out of place on Plasma. Respect an explicit override.
-    if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
+    if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE") && hasDesktopStyle(engine)) {
         QQuickStyle::setStyle(u"org.kde.desktop"_s);
     }
-
-    QQmlApplicationEngine engine;
     KLocalization::setupLocalizedContext(&engine);
     engine.setInitialProperties({{u"stopwatch"_s, QVariant::fromValue(&stopwatch)}});
     engine.loadFromModule(u"io.github.aaghashm.persistentstopwatch"_s, u"Main"_s);
