@@ -87,3 +87,38 @@ jobs:
           path: |
             ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm
             ~/rpmbuild/SRPMS/*.rpm
+
+  deb:
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates cmake ninja-build g++ \
+            extra-cmake-modules dpkg-dev file qt6-base-dev qt6-declarative-dev \
+            libkirigami-dev qml6-module-org-kde-kirigami qml6-module-org-kde-coreaddons \
+            libkf6config-dev libkf6coreaddons-dev libkf6crash-dev libkf6dbusaddons-dev \
+            libkf6i18n-dev libkf6windowsystem-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Build and test
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          ctest --test-dir build --output-on-failure
+
+      - name: Package
+        run: cd build && cpack -G DEB
+
+      - name: Install it and run it
+        run: |
+          apt-get install -y ./build/persistent-stopwatch_*.deb
+          persistent-stopwatch --reset --start --status
+          persistent-stopwatch --pause --status
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: build/persistent-stopwatch_*.deb
