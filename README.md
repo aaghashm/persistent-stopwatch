@@ -100,12 +100,20 @@ a small website.
 
 ## Installing
 
-On Fedora, download the RPM from the
-[latest release](https://github.com/aaghashm/persistent-stopwatch/releases/latest)
-and install it with dnf, which pulls in the KDE libraries it needs:
+Packages are attached to every
+[release](https://github.com/aaghashm/persistent-stopwatch/releases/latest).
+The package manager pulls in the KDE libraries it needs.
+
+Fedora:
 
 ```
 sudo dnf install ./persistent-stopwatch-*.rpm
+```
+
+Debian 13, Ubuntu 25.04 or newer:
+
+```
+sudo apt install ./persistent-stopwatch_*.deb
 ```
 
 ## Building from source
