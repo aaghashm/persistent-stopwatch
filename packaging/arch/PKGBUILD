@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+# Maintainer: Aaghash Murugesan <aaghashm@gmail.com>
+
+pkgname=persistent-stopwatch
+pkgver=0.2.0
+pkgrel=1
+pkgdesc='Stopwatch that survives reboots'
+arch=(x86_64 aarch64)
+url='https://github.com/aaghashm/persistent-stopwatch'
+license=(GPL-2.0-or-later)
+depends=(gcc-libs glibc hicolor-icon-theme kconfig kcoreaddons kcrash kdbusaddons ki18n kirigami kwindowsystem qt6-base qt6-declarative)
+makedepends=(extra-cmake-modules git)
+optdepends=('qqc2-desktop-style: native Plasma look and feel')
+source=("git+$url.git#tag=v$pkgver")
+sha256sums=('SKIP')
+
+build() {
+  cmake -B build -S $pkgname \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=None \
+    -DBUILD_TESTING=ON
+  cmake --build build
+}
+
+check() {
+  ctest --test-dir build --output-on-failure
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}
