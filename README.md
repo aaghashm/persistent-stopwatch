@@ -116,6 +116,12 @@ Debian 13, Ubuntu 25.04 or newer:
 sudo apt install ./persistent-stopwatch_*.deb
 ```
 
+Arch Linux: build it with the PKGBUILD in `packaging/arch`:
+
+```
+cd packaging/arch && makepkg -si
+```
+
 ## Building from source
 
 Dependencies (Fedora):
