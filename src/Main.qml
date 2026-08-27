@@ -117,6 +117,10 @@ Kirigami.ApplicationWindow {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Kirigami.Units.gridUnit
                 text: stopwatch.formatDuration(stopwatch.elapsedMs)
+                // Read once on focus; announcing every tenth of a second
+                // would make a screen reader unusable.
+                Accessible.role: Accessible.StaticText
+                Accessible.name: i18nc("@info accessible name, %1 is a duration", "Elapsed time %1", text)
                 font.family: root.monospaceFamily
                 font.pointSize: Kirigami.Theme.defaultFont.pointSize * 4
             }
@@ -147,6 +151,8 @@ Kirigami.ApplicationWindow {
                     required property bool isSlowest
 
                     width: ListView.view.width
+                    Accessible.name: i18nc("@info accessible name for a lap row", "Lap %1, %2, total %3", number,
+                                           stopwatch.formatDuration(splitMs), stopwatch.formatDuration(totalMs))
 
                     contentItem: RowLayout {
                         spacing: Kirigami.Units.largeSpacing
