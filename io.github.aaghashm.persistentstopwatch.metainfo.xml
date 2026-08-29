@@ -55,6 +55,17 @@ SPDX-License-Identifier: CC0-1.0
   </categories>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.3.0" date="2026-08-29">
+      <description>
+        <ul>
+          <li>Fastest lap in green, slowest in red</li>
+          <li>Copy all laps as a table</li>
+          <li>Undo an accidental reset, with Ctrl+Z or the button in the notification</li>
+          <li>Starts even when the KDE desktop style is not installed</li>
+          <li>Packages for Debian 13, Ubuntu 25.04 and Arch Linux</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.2.0" date="2026-08-08">
       <description>
         <p>Command line control and a few quality of life changes:</p>
