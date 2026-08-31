@@ -71,6 +71,21 @@ private Q_SLOTS:
         QCOMPARE(engine.elapsedMs(), 2000);
     }
 
+    void testToggle()
+    {
+        StopwatchEngine engine(clock());
+        CommandLine::applyActions(*parse({u"--toggle"_s}), engine);
+        QCOMPARE(engine.state(), StopwatchEngine::Running);
+
+        m_fakeNowMs += 1000;
+        CommandLine::applyActions(*parse({u"--toggle"_s}), engine);
+        QCOMPARE(engine.state(), StopwatchEngine::Paused);
+
+        CommandLine::applyActions(*parse({u"--toggle"_s}), engine);
+        QCOMPARE(engine.state(), StopwatchEngine::Running);
+        QCOMPARE(engine.elapsedMs(), 1000);
+    }
+
     void testResetBeforeStartRegardlessOfOrder()
     {
         StopwatchEngine engine(clock());
