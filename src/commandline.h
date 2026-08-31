@@ -23,8 +23,8 @@ bool hasAction(const QCommandLineParser &parser);
 bool wantsStatus(const QCommandLineParser &parser);
 bool wantsLaps(const QCommandLineParser &parser);
 
-// Applies reset, start, lap and pause in that order, so "--reset --start"
-// restarts from zero no matter how the flags were written.
+// Applies reset, start, toggle, lap and pause in that order, so
+// "--reset --start" restarts from zero no matter how the flags were written.
 void applyActions(const QCommandLineParser &parser, StopwatchEngine &engine);
 
 // One line, e.g. "Running 00:12:03.4 (started 2026-08-06T09:12:44)",

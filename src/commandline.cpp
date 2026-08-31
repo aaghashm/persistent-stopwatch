@@ -16,6 +16,7 @@ using namespace Qt::Literals::StringLiterals;
 namespace
 {
 const QString startOption = u"start"_s;
+const QString toggleOption = u"toggle"_s;
 const QString pauseOption = u"pause"_s;
 const QString lapOption = u"lap"_s;
 const QString resetOption = u"reset"_s;
@@ -28,6 +29,7 @@ void CommandLine::addOptions(QCommandLineParser &parser)
     parser.addOptions({
         {startOption, i18nc("@info:shell", "Start or resume the stopwatch.")},
         {pauseOption, i18nc("@info:shell", "Pause the stopwatch.")},
+        {toggleOption, i18nc("@info:shell", "Pause the stopwatch if it is running, start it otherwise.")},
         {lapOption, i18nc("@info:shell", "Record a lap.")},
         {resetOption, i18nc("@info:shell", "Reset the stopwatch to zero and clear the laps.")},
         {statusOption, i18nc("@info:shell", "Print the state and elapsed time, then exit.")},
@@ -40,6 +42,7 @@ bool CommandLine::needsWindow(int argc, char *argv[])
     static const QSet<QByteArray> headless = {
         "--start",
         "--pause",
+        "--toggle",
         "--lap",
         "--reset",
         "--status",
@@ -61,7 +64,7 @@ bool CommandLine::needsWindow(int argc, char *argv[])
 
 bool CommandLine::hasAction(const QCommandLineParser &parser)
 {
-    return parser.isSet(startOption) || parser.isSet(pauseOption) || parser.isSet(lapOption) || parser.isSet(resetOption);
+    return parser.isSet(startOption) || parser.isSet(pauseOption) || parser.isSet(toggleOption) || parser.isSet(lapOption) || parser.isSet(resetOption);
 }
 
 bool CommandLine::wantsStatus(const QCommandLineParser &parser)
@@ -81,6 +84,9 @@ void CommandLine::applyActions(const QCommandLineParser &parser, StopwatchEngine
     }
     if (parser.isSet(startOption)) {
         engine.start();
+    }
+    if (parser.isSet(toggleOption)) {
+        engine.state() == StopwatchEngine::Running ? engine.pause() : engine.start();
     }
     if (parser.isSet(lapOption)) {
         engine.lap();
