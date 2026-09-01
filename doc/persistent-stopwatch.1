@@ -5,7 +5,7 @@
 persistent-stopwatch \- a stopwatch that keeps counting across restarts and reboots
 .SH SYNOPSIS
 .B persistent-stopwatch
-[\fB\-\-start\fR] [\fB\-\-pause\fR] [\fB\-\-lap\fR] [\fB\-\-reset\fR] [\fB\-\-status\fR] [\fB\-\-laps\fR]
+[\fB\-\-start\fR] [\fB\-\-pause\fR] [\fB\-\-toggle\fR] [\fB\-\-lap\fR] [\fB\-\-reset\fR] [\fB\-\-status\fR] [\fB\-\-laps\fR]
 .SH DESCRIPTION
 Without options, opens the stopwatch window.
 If the window is already open, it is raised instead of opening a second one.
@@ -20,6 +20,10 @@ Start the stopwatch, or resume it if paused.
 .TP
 .B \-\-pause
 Pause the stopwatch.
+.TP
+.B \-\-toggle
+Pause the stopwatch if it is running, start it otherwise.
+Handy as the command behind a single global shortcut.
 .TP
 .B \-\-lap
 Record a lap. Ignored unless the stopwatch is running.
@@ -38,7 +42,7 @@ Print the recorded laps, oldest first, one per line: the lap number, the
 lap's own time and the total elapsed time, separated by tabs.
 .PP
 Action options can be combined. They are applied in the order reset, start,
-lap, pause, so
+toggle, lap, pause, so
 .B "\-\-reset \-\-start"
 always restarts from zero.
 If the window is open, actions are sent to it.

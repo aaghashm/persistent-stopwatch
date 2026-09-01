@@ -39,7 +39,7 @@ like KClock do it.
 - Keyboard shortcuts: **Space** start/pause · **L** lap · **R** reset
 - Shows when the current run was started
 - Full command line control, no window needed, works over SSH
-- Start, pause, lap and reset from the launcher's right-click menu
+- Start/pause, lap and reset from the launcher's right-click menu
 - Native Plasma look and feel, including your system fonts and icon theme
 
 ## Command line
@@ -52,6 +52,11 @@ persistent-stopwatch --reset --start   # restart from zero
 persistent-stopwatch --lap
 persistent-stopwatch --pause --status  # Paused 00:42:17.3
 ```
+
+`--toggle` starts or pauses depending on the current state. Bind it to a
+global shortcut in System Settings → Keyboard → Shortcuts (the launcher's
+"Start or Pause" action) and you can time things without touching the
+window at all.
 
 If the window is open, the command is sent to it. If not, the saved state
 is updated and nothing is shown. See `man persistent-stopwatch`.

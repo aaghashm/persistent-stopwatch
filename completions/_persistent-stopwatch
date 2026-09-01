@@ -5,6 +5,7 @@
 _arguments \
     '--start[start or resume the stopwatch]' \
     '--pause[pause the stopwatch]' \
+    '--toggle[pause if running, start otherwise]' \
     '--lap[record a lap]' \
     '--reset[reset to zero and clear the laps]' \
     '--status[print the state and elapsed time]' \
