@@ -12,15 +12,11 @@ StartupNotify=true
 SingleMainWindow=true
 Categories=Qt;KDE;Utility;
 Keywords=stopwatch;timer;chronometer;lap;
-Actions=Start;Pause;Lap;Reset;
+Actions=Toggle;Lap;Reset;
 
-[Desktop Action Start]
-Name=Start
-Exec=persistent-stopwatch --start
-
-[Desktop Action Pause]
-Name=Pause
-Exec=persistent-stopwatch --pause
+[Desktop Action Toggle]
+Name=Start or Pause
+Exec=persistent-stopwatch --toggle
 
 [Desktop Action Lap]
 Name=Lap

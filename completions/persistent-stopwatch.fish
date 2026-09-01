@@ -4,6 +4,7 @@
 complete -c persistent-stopwatch -f
 complete -c persistent-stopwatch -l start -d 'Start or resume the stopwatch'
 complete -c persistent-stopwatch -l pause -d 'Pause the stopwatch'
+complete -c persistent-stopwatch -l toggle -d 'Pause if running, start otherwise'
 complete -c persistent-stopwatch -l lap -d 'Record a lap'
 complete -c persistent-stopwatch -l reset -d 'Reset to zero and clear the laps'
 complete -c persistent-stopwatch -l status -d 'Print the state and elapsed time'
