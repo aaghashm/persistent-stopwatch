@@ -9,7 +9,7 @@ pkgdesc='Stopwatch that survives reboots'
 arch=(x86_64 aarch64)
 url='https://github.com/aaghashm/persistent-stopwatch'
 license=(GPL-2.0-or-later)
-depends=(gcc-libs glibc hicolor-icon-theme kconfig kcoreaddons kcrash kdbusaddons ki18n kirigami kwindowsystem qt6-base qt6-declarative)
+depends=(glibc libstdc++ hicolor-icon-theme kconfig kcoreaddons kcrash kdbusaddons ki18n kirigami kwindowsystem qt6-base qt6-declarative)
 makedepends=(extra-cmake-modules git)
 optdepends=('qqc2-desktop-style: native Plasma look and feel')
 source=("git+$url.git#tag=v$pkgver")
