@@ -1,0 +1,169 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+ * SPDX-License-Identifier: CC0-1.0
+ */
+
+:root {
+  --bg: #fcfcfc;
+  --fg: #232629;
+  --muted: #5d6166;
+  --card: #eff0f1;
+  --border: #d4d6d8;
+  --accent: #3daee9;
+  --accent-strong: #1d7fb5;
+  --code-bg: #232629;
+  --code-fg: #eff0f1;
+  --code-muted: #9aa0a6;
+  --positive: #27ae60;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1e20;
+    --fg: #eff0f1;
+    --muted: #a1a9b1;
+    --card: #232629;
+    --border: #3b4045;
+    --accent-strong: #61c3f2;
+    --code-bg: #141618;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 17px/1.6 "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+a {
+  color: var(--accent-strong);
+}
+
+main,
+.hero,
+footer {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.hero {
+  text-align: center;
+  padding-top: 56px;
+}
+
+.hero-icon {
+  display: block;
+  margin: 0 auto 8px;
+}
+
+h1 {
+  font-size: 2.4rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.tagline {
+  font-size: 1.3rem;
+  color: var(--muted);
+  margin: 4px 0 16px;
+}
+
+.lede {
+  max-width: 560px;
+  margin: 0 auto 24px;
+}
+
+.hero-links {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--fg);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+section {
+  padding-top: 48px;
+}
+
+h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+h3 {
+  font-size: 1.15rem;
+  margin: 24px 0 8px;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.features li {
+  padding: 10px 0 10px 28px;
+  position: relative;
+}
+
+.features li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 19px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+footer {
+  margin-top: 64px;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  body {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  .hero {
+    padding-top: 36px;
+  }
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--
+SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+SPDX-License-Identifier: CC0-1.0
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Persistent Stopwatch</title>
+  <meta name="description" content="A stopwatch for KDE Plasma that keeps counting across restarts and reboots, and works from the command line.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <img class="hero-icon" src="icon.svg" alt="" width="96" height="96">
+    <h1>Persistent Stopwatch</h1>
+    <p class="tagline">A stopwatch for Linux that never loses time.</p>
+    <p class="lede">
+      Close it, suspend, reboot, come back days later: the time is still right.
+      It stores the moment you pressed start instead of counting ticks, so there
+      is nothing running that can be stopped.
+    </p>
+    <nav class="hero-links">
+      <a class="button primary" href="#install">Install</a>
+      <a class="button" href="https://github.com/aaghashm/persistent-stopwatch">Source code</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="features">
+      <h2>What it does</h2>
+      <ul class="features">
+        <li><strong>Survives everything.</strong> Restarts, crashes, suspend and reboots do not stop the clock.</li>
+        <li><strong>Laps.</strong> Splits and totals, fastest in green, slowest in red, copy them all as a table.</li>
+        <li><strong>Undo.</strong> Reset by accident? Ctrl+Z brings back the time and the laps.</li>
+        <li><strong>Command line.</strong> Start, pause, lap, reset and read the time without opening a window, even over SSH.</li>
+        <li><strong>Native on Plasma.</strong> Built with Kirigami, follows your theme, fonts and icons.</li>
+      </ul>
+    </section>
+
+    <section id="install">
+      <h2>Install</h2>
+      <p>Packages for Fedora, Debian, Ubuntu and Arch are attached to every <a href="https://github.com/aaghashm/persistent-stopwatch/releases/latest">release</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Free software under the GPL 2.0 or later.
+      <a href="https://github.com/aaghashm/persistent-stopwatch">GitHub</a> ·
+      <a href="https://github.com/aaghashm/persistent-stopwatch/issues">Report a bug</a> ·
+      <a href="https://github.com/aaghashm/persistent-stopwatch/releases">Releases</a>
+    </p>
+  </footer>
+
+</body>
+</html>
