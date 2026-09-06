@@ -30,6 +30,16 @@ SPDX-License-Identifier: CC0-1.0
     <name>Aaghash Murugesan</name>
   </developer>
   <launchable type="desktop-id">io.github.aaghashm.persistentstopwatch.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>A running stopwatch with laps, the fastest and slowest highlighted</caption>
+      <image>https://raw.githubusercontent.com/aaghashm/persistent-stopwatch/main/screenshots/main.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>The same with Breeze Dark</caption>
+      <image>https://raw.githubusercontent.com/aaghashm/persistent-stopwatch/main/screenshots/main-dark.png</image>
+    </screenshot>
+  </screenshots>
   <url type="homepage">https://github.com/aaghashm/persistent-stopwatch</url>
   <url type="bugtracker">https://github.com/aaghashm/persistent-stopwatch/issues</url>
   <url type="vcs-browser">https://github.com/aaghashm/persistent-stopwatch</url>
