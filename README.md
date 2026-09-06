@@ -9,6 +9,8 @@ SPDX-License-Identifier: CC0-1.0
 
 A stopwatch for KDE Plasma that never loses time.
 
+![The stopwatch running, with laps](screenshots/main.png)
+
 ## Why this exists
 
 Every stopwatch app I tried has the same flaw: it counts ticks while it is
