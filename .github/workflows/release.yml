@@ -1,0 +1,100 @@
+# SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  rpm:
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    container: fedora:latest
+    steps:
+      - name: Install tools
+        run: dnf install -y --setopt=install_weak_deps=False git rpm-build dnf-plugins-core
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          version=$(sed -n 's/^Version: *//p' packaging/persistent-stopwatch.spec)
+          # A tag that doesn't match the spec would publish mislabeled packages.
+          test "v$version" = "$GITHUB_REF_NAME"
+          mkdir -p ~/rpmbuild/SOURCES dist
+          git archive --prefix=persistent-stopwatch-$version/ -o ~/rpmbuild/SOURCES/persistent-stopwatch-$version.tar.gz HEAD
+          dnf builddep -y packaging/persistent-stopwatch.spec
+          rpmbuild -ba packaging/persistent-stopwatch.spec
+          cp ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm dist/
+          # A fixed name too, so .../releases/latest/download/... always works.
+          cp ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm dist/persistent-stopwatch.$(uname -m).rpm
+          if [ "$(uname -m)" = x86_64 ]; then cp ~/rpmbuild/SRPMS/*.src.rpm dist/; fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm-${{ matrix.runner }}
+          path: dist/
+
+  deb:
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    container: debian:trixie
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates cmake ninja-build g++ \
+            extra-cmake-modules dpkg-dev file qt6-base-dev qt6-declarative-dev \
+            libkirigami-dev qml6-module-org-kde-kirigami qml6-module-org-kde-coreaddons \
+            libkf6config-dev libkf6coreaddons-dev libkf6crash-dev libkf6dbusaddons-dev \
+            libkf6i18n-dev libkf6windowsystem-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          ctest --test-dir build --output-on-failure
+          cd build && cpack -G DEB
+          mkdir -p ../dist
+          cp persistent-stopwatch_*.deb ../dist/
+          cp persistent-stopwatch_*.deb ../dist/persistent-stopwatch_$(dpkg --print-architecture).deb
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-${{ matrix.runner }}
+          path: dist/
+
+  publish:
+    needs: [rpm, deb]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<NOTES
+          See [what's new](https://github.com/aaghashm/persistent-stopwatch/blob/$GITHUB_REF_NAME/io.github.aaghashm.persistentstopwatch.metainfo.xml) and the [install instructions](https://aaghashm.github.io/persistent-stopwatch/#install).
+
+          Fedora 44+: \`sudo dnf install https://github.com/aaghashm/persistent-stopwatch/releases/download/$GITHUB_REF_NAME/persistent-stopwatch.\$(uname -m).rpm\`
+          NOTES
+          gh release create "$GITHUB_REF_NAME" --verify-tag \
+            --title "Persistent Stopwatch ${GITHUB_REF_NAME#v}" \
+            --notes-file notes.md dist/*
