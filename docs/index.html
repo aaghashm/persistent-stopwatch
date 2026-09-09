@@ -48,8 +48,45 @@ SPDX-License-Identifier: CC0-1.0
 
     <section id="install">
       <h2>Install</h2>
-      <p>Packages for Fedora, Debian, Ubuntu and Arch are attached to every <a href="https://github.com/aaghashm/persistent-stopwatch/releases/latest">release</a>.</p>
+
+      <p>Packages are attached to every <a href="https://github.com/aaghashm/persistent-stopwatch/releases/latest">release</a>. Your package manager pulls in the KDE libraries it needs.</p>
+
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" aria-controls="tab-fedora" id="t-fedora">Fedora</button>
+        <button role="tab" aria-selected="false" aria-controls="tab-debian" id="t-debian">Debian / Ubuntu</button>
+        <button role="tab" aria-selected="false" aria-controls="tab-arch" id="t-arch">Arch</button>
+        <button role="tab" aria-selected="false" aria-controls="tab-source" id="t-source">From source</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="tab-fedora" aria-labelledby="t-fedora">
+        <p>Fedora 44 or newer. dnf installs straight from the release URL and pulls in the KDE libraries:</p>
+        <div class="code"><pre><code>sudo dnf install https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch.$(uname -m).rpm</code></pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="tab-debian" aria-labelledby="t-debian" hidden>
+        <p>Debian 13, Ubuntu 25.04 or newer (they ship KDE Frameworks 6):</p>
+        <div class="code"><pre><code>arch=$(dpkg --print-architecture)
+curl -fLO https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch_$arch.deb
+sudo apt install ./persistent-stopwatch_$arch.deb</code></pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="tab-arch" aria-labelledby="t-arch" hidden>
+        <p>Build the package with the PKGBUILD in the repository:</p>
+        <div class="code"><pre><code>git clone https://github.com/aaghashm/persistent-stopwatch
+cd persistent-stopwatch/packaging/arch
+makepkg -si</code></pre></div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="tab-source" aria-labelledby="t-source" hidden>
+        <p>Needs CMake, extra-cmake-modules, Qt 6.6+ and KDE Frameworks 6 (Kirigami, Config, CoreAddons, Crash, DBusAddons, I18n, WindowSystem).</p>
+        <div class="code"><pre><code>git clone https://github.com/aaghashm/persistent-stopwatch
+cd persistent-stopwatch
+cmake -B build -G Ninja
+cmake --build build
+sudo cmake --install build</code></pre></div>
+      </div>
     </section>
+
   </main>
 
   <footer>
@@ -60,6 +97,30 @@ SPDX-License-Identifier: CC0-1.0
       <a href="https://github.com/aaghashm/persistent-stopwatch/releases">Releases</a>
     </p>
   </footer>
+
+  <script>
+    // Tabs: plain buttons, arrow keys move between them.
+    const tabs = [...document.querySelectorAll('[role=tab]')];
+    function select(tab) {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute('aria-selected', on);
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      }
+    }
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', e => {
+        const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (step) {
+          const next = tabs[(i + step + tabs.length) % tabs.length];
+          select(next);
+          next.focus();
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
