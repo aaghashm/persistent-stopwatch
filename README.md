@@ -107,20 +107,28 @@ a small website.
 
 ## Installing
 
-Packages are attached to every
-[release](https://github.com/aaghashm/persistent-stopwatch/releases/latest).
-The package manager pulls in the KDE libraries it needs.
-
-Fedora:
+The quickest way, on Fedora, Debian, Ubuntu or Arch:
 
 ```
-sudo dnf install ./persistent-stopwatch-*.rpm
+curl -fsSL https://aaghashm.github.io/persistent-stopwatch/install.sh | sh
+```
+
+It only picks the right package and hands it to your package manager
+([read it](docs/install.sh)). To do that by hand, packages are attached to
+every [release](https://github.com/aaghashm/persistent-stopwatch/releases/latest).
+
+Fedora 44 or newer:
+
+```
+sudo dnf install https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch.$(uname -m).rpm
 ```
 
 Debian 13, Ubuntu 25.04 or newer:
 
 ```
-sudo apt install ./persistent-stopwatch_*.deb
+arch=$(dpkg --print-architecture)
+curl -fLO https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch_$arch.deb
+sudo apt install ./persistent-stopwatch_$arch.deb
 ```
 
 Arch Linux: build it with the PKGBUILD in `packaging/arch`:
