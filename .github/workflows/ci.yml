@@ -38,7 +38,7 @@ jobs:
     container: fedora:latest
     steps:
       - name: Install tools
-        run: dnf install -y --setopt=install_weak_deps=False git reuse appstream desktop-file-utils clang-tools-extra
+        run: dnf install -y --setopt=install_weak_deps=False git reuse appstream desktop-file-utils clang-tools-extra ShellCheck
 
       - uses: actions/checkout@v4
 
@@ -53,6 +53,9 @@ jobs:
 
       - name: Formatting
         run: clang-format --dry-run --Werror src/*.cpp src/*.h autotests/*.cpp
+
+      - name: Shell scripts
+        run: shellcheck docs/install.sh src/Messages.sh completions/persistent-stopwatch.bash
 
   rpm:
     runs-on: ubuntu-latest
@@ -75,9 +78,11 @@ jobs:
       - name: rpmlint
         run: rpmlint -r packaging/persistent-stopwatch.rpmlintrc packaging/persistent-stopwatch.spec ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm
 
-      - name: Install it and run it
+      - name: Install it with install.sh and run it
         run: |
-          dnf install -y ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm
+          mkdir /tmp/release
+          cp ~/rpmbuild/RPMS/*/persistent-stopwatch-[0-9]*.rpm /tmp/release/persistent-stopwatch.$(uname -m).rpm
+          PERSISTENT_STOPWATCH_DOWNLOADS=file:///tmp/release sh docs/install.sh
           persistent-stopwatch --reset --start --status
           persistent-stopwatch --pause --status
 
@@ -112,9 +117,12 @@ jobs:
       - name: Package
         run: cd build && cpack -G DEB
 
-      - name: Install it and run it
+      - name: Install it with install.sh and run it
         run: |
-          apt-get install -y ./build/persistent-stopwatch_*.deb
+          apt-get install -y --no-install-recommends curl
+          mkdir /tmp/release
+          cp build/persistent-stopwatch_*.deb /tmp/release/persistent-stopwatch_$(dpkg --print-architecture).deb
+          PERSISTENT_STOPWATCH_DOWNLOADS=file:///tmp/release sh docs/install.sh
           persistent-stopwatch --reset --start --status
           persistent-stopwatch --pause --status
 
