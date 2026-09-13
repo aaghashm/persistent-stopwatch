@@ -237,6 +237,44 @@ code {
   padding-top: 8px;
 }
 
+.keys {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+}
+
+.keys dd {
+  margin: 0;
+}
+
+kbd {
+  font: 13px "Noto Sans Mono", ui-monospace, monospace;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--card);
+}
+
+.options {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.options th,
+.options td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.options th {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 footer {
   margin-top: 64px;
   padding-top: 20px;
