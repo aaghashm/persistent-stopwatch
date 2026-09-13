@@ -90,6 +90,44 @@ sudo cmake --install build</code></pre></div>
       </div>
     </section>
 
+    <section id="usage">
+      <h2>Use it</h2>
+      <p>Open <em>Persistent Stopwatch</em> from your app menu. In the window:</p>
+      <dl class="keys">
+        <dt><kbd>Space</kbd></dt><dd>start or pause</dd>
+        <dt><kbd>L</kbd></dt><dd>lap</dd>
+        <dt><kbd>R</kbd></dt><dd>reset</dd>
+        <dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>undo the reset</dd>
+      </dl>
+
+      <h3>From the command line</h3>
+      <p>The window is optional. If it is open, commands are sent to it; if not, the saved state is updated and nothing is shown.</p>
+      <div class="code"><pre><code><span class="c"># time a build</span>
+persistent-stopwatch --reset --start
+make
+persistent-stopwatch --pause --status
+<span class="out">Paused 00:04:12.7 (started 2026-09-05T10:31:08)</span>
+
+<span class="c"># laps, tab separated: number, split, total</span>
+persistent-stopwatch --laps
+<span class="out">1	00:01:02.4	00:01:02.4
+2	00:00:58.9	00:02:01.3</span></code></pre></div>
+
+      <table class="options">
+        <thead><tr><th>Option</th><th>Does</th></tr></thead>
+        <tbody>
+          <tr><td><code>--start</code></td><td>start, or resume if paused</td></tr>
+          <tr><td><code>--pause</code></td><td>pause</td></tr>
+          <tr><td><code>--toggle</code></td><td>pause if running, start otherwise</td></tr>
+          <tr><td><code>--lap</code></td><td>record a lap</td></tr>
+          <tr><td><code>--reset</code></td><td>back to zero, laps cleared</td></tr>
+          <tr><td><code>--status</code></td><td>print state, time and start time</td></tr>
+          <tr><td><code>--laps</code></td><td>print the laps</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Tip: bind <code>persistent-stopwatch --toggle</code> to a global shortcut (System Settings, Keyboard, Shortcuts) and time things without touching the window. <code>man persistent-stopwatch</code> has the rest.</p>
+    </section>
+
   </main>
 
   <footer>
