@@ -128,6 +128,17 @@ persistent-stopwatch --laps
       <p class="note">Tip: bind <code>persistent-stopwatch --toggle</code> to a global shortcut (System Settings, Keyboard, Shortcuts) and time things without touching the window. <code>man persistent-stopwatch</code> has the rest.</p>
     </section>
 
+    <section id="how">
+      <h2>How it works</h2>
+      <p>
+        Most stopwatches add up timer ticks while they run, so the count dies with the process.
+        This one saves three facts on every button press: the state, the time accumulated before
+        the last start, and the wall-clock moment of that start. Elapsed time is always computed
+        from those. A wall clock that jumps backward (NTP, a dead RTC battery) is clamped so the
+        time can never shrink.
+      </p>
+      <p>The state lives in <code>~/.local/state/persistentstopwatchstaterc</code>.</p>
+    </section>
   </main>
 
   <footer>
