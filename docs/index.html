@@ -51,7 +51,7 @@ SPDX-License-Identifier: CC0-1.0
 
       <h3>One command</h3>
       <p>Detects Fedora, Debian, Ubuntu or Arch and installs the right package:</p>
-      <div class="code"><pre><code>curl -fsSL https://aaghashm.github.io/persistent-stopwatch/install.sh | sh</code></pre></div>
+      <div class="code"><pre><code>curl -fsSL https://aaghashm.github.io/persistent-stopwatch/install.sh | sh</code></pre><button class="copy" type="button">Copy</button></div>
       <p class="note">Prefer to see what runs first? <a href="install.sh">Read install.sh</a>. Or use your package manager directly:</p>
 
       <div class="tabs" role="tablist">
@@ -63,21 +63,21 @@ SPDX-License-Identifier: CC0-1.0
 
       <div class="panel" role="tabpanel" id="tab-fedora" aria-labelledby="t-fedora">
         <p>Fedora 44 or newer. dnf installs straight from the release URL and pulls in the KDE libraries:</p>
-        <div class="code"><pre><code>sudo dnf install https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch.$(uname -m).rpm</code></pre></div>
+        <div class="code"><pre><code>sudo dnf install https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch.$(uname -m).rpm</code></pre><button class="copy" type="button">Copy</button></div>
       </div>
 
       <div class="panel" role="tabpanel" id="tab-debian" aria-labelledby="t-debian" hidden>
         <p>Debian 13, Ubuntu 25.04 or newer (they ship KDE Frameworks 6):</p>
         <div class="code"><pre><code>arch=$(dpkg --print-architecture)
 curl -fLO https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch_$arch.deb
-sudo apt install ./persistent-stopwatch_$arch.deb</code></pre></div>
+sudo apt install ./persistent-stopwatch_$arch.deb</code></pre><button class="copy" type="button">Copy</button></div>
       </div>
 
       <div class="panel" role="tabpanel" id="tab-arch" aria-labelledby="t-arch" hidden>
         <p>Build the package with the PKGBUILD in the repository:</p>
         <div class="code"><pre><code>git clone https://github.com/aaghashm/persistent-stopwatch
 cd persistent-stopwatch/packaging/arch
-makepkg -si</code></pre></div>
+makepkg -si</code></pre><button class="copy" type="button">Copy</button></div>
       </div>
 
       <div class="panel" role="tabpanel" id="tab-source" aria-labelledby="t-source" hidden>
@@ -86,7 +86,7 @@ makepkg -si</code></pre></div>
 cd persistent-stopwatch
 cmake -B build -G Ninja
 cmake --build build
-sudo cmake --install build</code></pre></div>
+sudo cmake --install build</code></pre><button class="copy" type="button">Copy</button></div>
       </div>
     </section>
 
@@ -111,7 +111,7 @@ persistent-stopwatch --pause --status
 <span class="c"># laps, tab separated: number, split, total</span>
 persistent-stopwatch --laps
 <span class="out">1	00:01:02.4	00:01:02.4
-2	00:00:58.9	00:02:01.3</span></code></pre></div>
+2	00:00:58.9	00:02:01.3</span></code></pre><button class="copy" type="button">Copy</button></div>
 
       <table class="options">
         <thead><tr><th>Option</th><th>Does</th></tr></thead>
@@ -172,7 +172,21 @@ persistent-stopwatch --laps
         }
       });
     });
+    // Copy buttons copy the command only, without the example output and comments.
+    for (const button of document.querySelectorAll('.copy')) {
+      button.addEventListener('click', async () => {
+        const code = button.previousElementSibling.querySelector('code').cloneNode(true);
+        code.querySelectorAll('.out, .c').forEach(n => n.remove());
+        const text = code.textContent.split('\n').filter(l => l.trim()).join('\n');
+        try {
+          await navigator.clipboard.writeText(text);
+          button.textContent = 'Copied';
+        } catch {
+          button.textContent = 'Press Ctrl+C';
+        }
+        setTimeout(() => (button.textContent = 'Copy'), 1500);
+      });
+    }
   </script>
-
 </body>
 </html>
