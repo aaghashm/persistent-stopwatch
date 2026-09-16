@@ -99,6 +99,12 @@ h1 {
   font-weight: 500;
 }
 
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 .shot {
   margin: 40px auto 0;
 }
@@ -108,12 +114,6 @@ h1 {
   height: auto;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgb(0 0 0 / 0.18);
-}
-
-.button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
 }
 
 section {
@@ -296,5 +296,9 @@ footer {
 
   .hero {
     padding-top: 36px;
+  }
+
+  .options td:first-child {
+    white-space: nowrap;
   }
 }
