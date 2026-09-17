@@ -11,10 +11,13 @@
 #include <QTextStream>
 
 #include <KAboutData>
+#include <KConfigGroup>
 #include <KCrash>
 #include <KDBusService>
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
+#include <KSharedConfig>
+#include <KWindowConfig>
 #include <KWindowSystem>
 
 #include "commandline.h"
@@ -110,6 +113,14 @@ int main(int argc, char *argv[])
     }
 
     auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst());
+
+    // Size only: on Wayland the compositor decides where windows go anyway.
+    KConfigGroup windowState = KSharedConfig::openStateConfig()->group(u"Window"_s);
+    KWindowConfig::restoreWindowSize(window, windowState);
+    QObject::connect(app.get(), &QCoreApplication::aboutToQuit, window, [window, windowState]() mutable {
+        KWindowConfig::saveWindowSize(window, windowState);
+        windowState.sync();
+    });
     QObject::connect(&service, &KDBusService::activateRequested, window, [window, &stopwatch](const QStringList &arguments) {
         QCommandLineParser remoteParser;
         CommandLine::addOptions(remoteParser);
