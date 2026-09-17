@@ -31,6 +31,7 @@ target_link_libraries(persistent-stopwatch PRIVATE
     Qt6::QuickControls2
     Qt6::Widgets
     KF6::ConfigCore
+    KF6::ConfigGui
     KF6::CoreAddons
     KF6::Crash
     KF6::DBusAddons
