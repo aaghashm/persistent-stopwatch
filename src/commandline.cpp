@@ -4,6 +4,9 @@
 #include "commandline.h"
 
 #include <QCommandLineParser>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QSet>
 
 #include <KLocalizedString>
@@ -22,6 +25,7 @@ const QString lapOption = u"lap"_s;
 const QString resetOption = u"reset"_s;
 const QString statusOption = u"status"_s;
 const QString lapsOption = u"laps"_s;
+const QString jsonOption = u"json"_s;
 }
 
 void CommandLine::addOptions(QCommandLineParser &parser)
@@ -34,6 +38,7 @@ void CommandLine::addOptions(QCommandLineParser &parser)
         {resetOption, i18nc("@info:shell", "Reset the stopwatch to zero and clear the laps.")},
         {statusOption, i18nc("@info:shell", "Print the state and elapsed time, then exit.")},
         {lapsOption, i18nc("@info:shell", "Print the recorded laps, then exit.")},
+        {jsonOption, i18nc("@info:shell", "Print state, time and laps as JSON, then exit.")},
     });
 }
 
@@ -47,6 +52,7 @@ bool CommandLine::needsWindow(int argc, char *argv[])
         "--reset",
         "--status",
         "--laps",
+        "--json",
         "-h",
         "--help",
         "-v",
@@ -75,6 +81,11 @@ bool CommandLine::wantsStatus(const QCommandLineParser &parser)
 bool CommandLine::wantsLaps(const QCommandLineParser &parser)
 {
     return parser.isSet(lapsOption);
+}
+
+bool CommandLine::wantsJson(const QCommandLineParser &parser)
+{
+    return parser.isSet(jsonOption);
 }
 
 void CommandLine::applyActions(const QCommandLineParser &parser, StopwatchEngine &engine)
@@ -115,4 +126,33 @@ QString CommandLine::statusLine(const StopwatchEngine &engine)
         line += u' ' + i18nc("@info:shell %1 is an ISO 8601 date and time", "(started %1)", engine.startedAt().toString(Qt::ISODate));
     }
     return line;
+}
+
+QByteArray CommandLine::statusJson(const StopwatchEngine &engine)
+{
+    // Untranslated on purpose: this is an interface, not a message.
+    static const QHash<StopwatchEngine::State, QString> stateNames = {
+        {StopwatchEngine::Stopped, u"stopped"_s},
+        {StopwatchEngine::Running, u"running"_s},
+        {StopwatchEngine::Paused, u"paused"_s},
+    };
+
+    QJsonArray laps;
+    const LapsModel *model = engine.laps();
+    for (int row = model->rowCount() - 1; row >= 0; --row) {
+        const QModelIndex index = model->index(row, 0);
+        laps.append(QJsonObject{
+            {u"number"_s, index.data(LapsModel::NumberRole).toInt()},
+            {u"splitMs"_s, index.data(LapsModel::SplitMsRole).toLongLong()},
+            {u"totalMs"_s, index.data(LapsModel::TotalMsRole).toLongLong()},
+        });
+    }
+
+    QJsonObject status{
+        {u"state"_s, stateNames.value(engine.state())},
+        {u"elapsedMs"_s, engine.elapsedMs()},
+        {u"startedAt"_s, engine.startedAt().isValid() ? QJsonValue(engine.startedAt().toString(Qt::ISODateWithMs)) : QJsonValue()},
+        {u"laps"_s, laps},
+    };
+    return QJsonDocument(status).toJson(QJsonDocument::Compact);
 }

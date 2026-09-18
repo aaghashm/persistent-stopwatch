@@ -3,6 +3,7 @@
 
 #pragma once
 
+class QByteArray;
 class QCommandLineParser;
 class QString;
 class StopwatchEngine;
@@ -22,6 +23,7 @@ bool needsWindow(int argc, char *argv[]);
 bool hasAction(const QCommandLineParser &parser);
 bool wantsStatus(const QCommandLineParser &parser);
 bool wantsLaps(const QCommandLineParser &parser);
+bool wantsJson(const QCommandLineParser &parser);
 
 // Applies reset, start, toggle, lap and pause in that order, so
 // "--reset --start" restarts from zero no matter how the flags were written.
@@ -31,4 +33,7 @@ void applyActions(const QCommandLineParser &parser, StopwatchEngine &engine);
 // meant for a terminal or a status bar.
 QString statusLine(const StopwatchEngine &engine);
 
+// Everything --status and --laps print, as one JSON object with plain
+// millisecond numbers, for scripts and status bars.
+QByteArray statusJson(const StopwatchEngine &engine);
 }
