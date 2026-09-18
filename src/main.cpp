@@ -39,6 +39,10 @@ static bool hasDesktopStyle(const QQmlEngine &engine)
 static void printReport(const QCommandLineParser &parser, const StopwatchEngine &stopwatch)
 {
     QTextStream out(stdout);
+    if (CommandLine::wantsJson(parser)) {
+        out << QString::fromUtf8(CommandLine::statusJson(stopwatch)) << Qt::endl;
+        return;
+    }
     if (CommandLine::wantsLaps(parser)) {
         out << stopwatch.laps()->toTable();
     }
@@ -74,7 +78,8 @@ int main(int argc, char *argv[])
 
     // Reading needs no coordination: whoever owns the state syncs it to disk
     // on every change, so the file is always current.
-    if ((CommandLine::wantsStatus(parser) || CommandLine::wantsLaps(parser)) && !CommandLine::hasAction(parser)) {
+    const bool wantsReport = CommandLine::wantsStatus(parser) || CommandLine::wantsLaps(parser) || CommandLine::wantsJson(parser);
+    if (wantsReport && !CommandLine::hasAction(parser)) {
         const StopwatchEngine stopwatch;
         printReport(parser, stopwatch);
         return 0;

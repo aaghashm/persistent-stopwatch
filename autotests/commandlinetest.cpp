@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <QCommandLineParser>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QStandardPaths>
 #include <QTest>
 
@@ -134,6 +137,25 @@ private Q_SLOTS:
         engine.lap();
 
         QCOMPARE(engine.laps()->toTable(), u"1\t00:00:10.0\t00:00:10.0\n2\t00:00:02.5\t00:00:12.5\n"_s);
+    }
+
+    void testStatusJson()
+    {
+        StopwatchEngine engine(clock());
+        QCOMPARE(CommandLine::statusJson(engine), QByteArray(R"({"elapsedMs":0,"laps":[],"startedAt":null,"state":"stopped"})"));
+
+        engine.start();
+        const QString started = QDateTime::fromMSecsSinceEpoch(m_fakeNowMs).toString(Qt::ISODateWithMs);
+        m_fakeNowMs += 1500;
+        engine.lap();
+        m_fakeNowMs += 500;
+
+        const QJsonObject json = QJsonDocument::fromJson(CommandLine::statusJson(engine)).object();
+        QCOMPARE(json[u"state"_s].toString(), u"running"_s);
+        QCOMPARE(json[u"elapsedMs"_s].toInteger(), 2000);
+        QCOMPARE(json[u"startedAt"_s].toString(), started);
+        QCOMPARE(json[u"laps"_s].toArray().size(), 1);
+        QCOMPARE(json[u"laps"_s][0][u"splitMs"_s].toInteger(), 1500);
     }
 
 private:
