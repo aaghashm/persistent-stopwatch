@@ -52,7 +52,8 @@ or a global shortcut:
 ```
 persistent-stopwatch --reset --start   # restart from zero
 persistent-stopwatch --lap
-persistent-stopwatch --pause --status  # Paused 00:42:17.3
+persistent-stopwatch --pause --status  # Paused 00:42:17.3 (started ...)
+persistent-stopwatch --json            # for scripts and status bars
 ```
 
 `--toggle` starts or pauses depending on the current state. Bind it to a

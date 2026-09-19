@@ -5,7 +5,7 @@
 persistent-stopwatch \- a stopwatch that keeps counting across restarts and reboots
 .SH SYNOPSIS
 .B persistent-stopwatch
-[\fB\-\-start\fR] [\fB\-\-pause\fR] [\fB\-\-toggle\fR] [\fB\-\-lap\fR] [\fB\-\-reset\fR] [\fB\-\-status\fR] [\fB\-\-laps\fR]
+[\fB\-\-start\fR] [\fB\-\-pause\fR] [\fB\-\-toggle\fR] [\fB\-\-lap\fR] [\fB\-\-reset\fR] [\fB\-\-status\fR] [\fB\-\-laps\fR] [\fB\-\-json\fR]
 .SH DESCRIPTION
 Without options, opens the stopwatch window.
 If the window is already open, it is raised instead of opening a second one.
@@ -40,6 +40,14 @@ then exit.
 .B \-\-laps
 Print the recorded laps, oldest first, one per line: the lap number, the
 lap's own time and the total elapsed time, separated by tabs.
+.TP
+.B \-\-json
+Print the state, the elapsed time in milliseconds, the start time and the
+laps as a single JSON object, for scripts and status bars. Replaces the
+output of
+.B \-\-status
+and
+.BR \-\-laps .
 .PP
 Action options can be combined. They are applied in the order reset, start,
 toggle, lap, pause, so
@@ -82,6 +90,14 @@ Get the fastest lap from a run:
 .RS
 .nf
 persistent-stopwatch \-\-laps | sort \-t "$(printf '\\t')" \-k2 | head \-1
+.fi
+.RE
+.PP
+Show the elapsed minutes in a status bar:
+.PP
+.RS
+.nf
+persistent-stopwatch \-\-json | jq '.elapsedMs / 60000 | floor'
 .fi
 .RE
 .SH BUGS

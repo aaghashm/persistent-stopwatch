@@ -10,5 +10,6 @@ _arguments \
     '--reset[reset to zero and clear the laps]' \
     '--status[print the state and elapsed time]' \
     '--laps[print the recorded laps]' \
+    '--json[print state, time and laps as JSON]' \
     '(- *)'{-h,--help}'[show help]' \
     '(- *)'{-v,--version}'[show version]'
