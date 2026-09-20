@@ -171,6 +171,14 @@ button press, which is nothing.
 Backward wall-clock jumps (NTP corrections, a dead RTC battery) are clamped so
 elapsed time can never go negative or shrink.
 
+## Development
+
+The code follows the KDE Frameworks coding style, enforced by
+clang-format (a pre-commit hook is installed when you configure). CI
+builds and tests every push on Fedora and Debian, checks REUSE
+compliance, the desktop and AppStream files, and builds, installs and
+runs the RPM and the .deb.
+
 ## License
 
 GPL-2.0-or-later. This repository follows the
