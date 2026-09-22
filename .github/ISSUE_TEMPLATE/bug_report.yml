@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2026 Aaghash Murugesan <aaghashm@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+
+name: Bug report
+description: Something doesn't work, or the time is wrong
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: And what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: Include suspends, reboots or clock changes if any happened.
+  - type: input
+    id: system
+    attributes:
+      label: Distribution and Plasma version
+      placeholder: Fedora 44, Plasma 6.7
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installed from
+      options:
+        - RPM
+        - .deb
+        - PKGBUILD
+        - Built from source
+  - type: textarea
+    id: json
+    attributes:
+      label: Output of persistent-stopwatch --json
+      render: json
