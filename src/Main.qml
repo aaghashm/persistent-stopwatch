@@ -21,15 +21,15 @@ Kirigami.ApplicationWindow {
     // Kirigami.Theme.fixedWidthFont is missing in older Kirigami (Debian 13
     // ships 6.13), and without a fixed-width font the digits jiggle.
     readonly property string monospaceFamily: Kirigami.Theme.fixedWidthFont ? Kirigami.Theme.fixedWidthFont.family : "monospace"
-    readonly property string startedAtText: stopwatch.startedAt.toLocaleString(Qt.locale(), Locale.ShortFormat)
+    readonly property string startedAtText: root.stopwatch.startedAt.toLocaleString(Qt.locale(), Locale.ShortFormat)
 
     Shortcut {
         sequence: "Space"
-        onActivated: stopwatch.state === StopwatchEngine.Running ? stopwatch.pause() : stopwatch.start()
+        onActivated: root.stopwatch.state === StopwatchEngine.Running ? root.stopwatch.pause() : root.stopwatch.start()
     }
     Shortcut {
         sequence: "L"
-        onActivated: stopwatch.lap()
+        onActivated: root.stopwatch.lap()
     }
     Shortcut {
         sequence: "R"
@@ -37,16 +37,16 @@ Kirigami.ApplicationWindow {
     }
     Shortcut {
         sequences: [StandardKey.Undo]
-        onActivated: stopwatch.undoReset()
+        onActivated: root.stopwatch.undoReset()
     }
 
     function resetWithUndo() {
-        if (stopwatch.state === StopwatchEngine.Stopped) {
+        if (root.stopwatch.state === StopwatchEngine.Stopped) {
             return;
         }
-        stopwatch.reset();
+        root.stopwatch.reset();
         showPassiveNotification(i18nc("@info:status", "Stopwatch reset"), "long",
-                                i18nc("@action:button", "Undo"), () => stopwatch.undoReset());
+                                i18nc("@action:button", "Undo"), () => root.stopwatch.undoReset());
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -79,17 +79,17 @@ Kirigami.ApplicationWindow {
 
         actions: [
             Kirigami.Action {
-                text: stopwatch.state === StopwatchEngine.Running
+                text: root.stopwatch.state === StopwatchEngine.Running
                     ? i18nc("@action:button pause the stopwatch", "Pause")
                     : i18nc("@action:button start the stopwatch", "Start")
-                icon.name: stopwatch.state === StopwatchEngine.Running ? "chronometer-pause" : "chronometer-start"
-                onTriggered: stopwatch.state === StopwatchEngine.Running ? stopwatch.pause() : stopwatch.start()
+                icon.name: root.stopwatch.state === StopwatchEngine.Running ? "chronometer-pause" : "chronometer-start"
+                onTriggered: root.stopwatch.state === StopwatchEngine.Running ? root.stopwatch.pause() : root.stopwatch.start()
             },
             Kirigami.Action {
                 text: i18nc("@action:button record a lap", "Lap")
                 icon.name: "chronometer-lap"
-                enabled: stopwatch.state === StopwatchEngine.Running
-                onTriggered: stopwatch.lap()
+                enabled: root.stopwatch.state === StopwatchEngine.Running
+                onTriggered: root.stopwatch.lap()
             },
             Kirigami.Action {
                 text: i18nc("@action:button", "Copy Laps")
@@ -97,14 +97,14 @@ Kirigami.ApplicationWindow {
                 displayHint: Kirigami.DisplayHint.AlwaysHide
                 enabled: lapsView.count > 0
                 onTriggered: {
-                    stopwatch.laps.copyToClipboard()
+                    root.stopwatch.laps.copyToClipboard()
                     root.showPassiveNotification(i18nc("@info:status", "Laps copied to the clipboard"))
                 }
             },
             Kirigami.Action {
                 text: i18nc("@action:button reset the stopwatch to zero", "Reset")
                 icon.name: "chronometer-reset"
-                enabled: stopwatch.state !== StopwatchEngine.Stopped
+                enabled: root.stopwatch.state !== StopwatchEngine.Stopped
                 onTriggered: root.resetWithUndo()
             }
         ]
@@ -116,7 +116,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Heading {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Kirigami.Units.gridUnit
-                text: stopwatch.formatDuration(stopwatch.elapsedMs)
+                text: root.stopwatch.formatDuration(root.stopwatch.elapsedMs)
                 // Read once on focus; announcing every tenth of a second
                 // would make a screen reader unusable.
                 Accessible.role: Accessible.StaticText
@@ -127,10 +127,10 @@ Kirigami.ApplicationWindow {
 
             Controls.Label {
                 Layout.alignment: Qt.AlignHCenter
-                text: stopwatch.state === StopwatchEngine.Paused
+                text: root.stopwatch.state === StopwatchEngine.Paused
                     ? i18nc("@info:status %1 is a date and time", "Paused · started %1", root.startedAtText)
                     : i18nc("@info:status %1 is a date and time", "Started %1", root.startedAtText)
-                opacity: stopwatch.state === StopwatchEngine.Stopped ? 0 : 0.7
+                opacity: root.stopwatch.state === StopwatchEngine.Stopped ? 0 : 0.7
             }
 
             ListView {
@@ -139,7 +139,7 @@ Kirigami.ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
-                model: stopwatch.laps
+                model: root.stopwatch.laps
 
                 delegate: Controls.ItemDelegate {
                     id: lapDelegate
@@ -151,28 +151,28 @@ Kirigami.ApplicationWindow {
                     required property bool isSlowest
 
                     width: ListView.view.width
-                    Accessible.name: i18nc("@info accessible name for a lap row", "Lap %1, %2, total %3", number,
-                                           stopwatch.formatDuration(splitMs), stopwatch.formatDuration(totalMs))
+                    Accessible.name: i18nc("@info accessible name for a lap row", "Lap %1, %2, total %3", lapDelegate.number,
+                                           root.stopwatch.formatDuration(lapDelegate.splitMs), root.stopwatch.formatDuration(lapDelegate.totalMs))
 
                     contentItem: RowLayout {
                         spacing: Kirigami.Units.largeSpacing
 
                         Controls.Label {
-                            text: i18nc("@item:intable numbered lap", "Lap %1", number)
+                            text: i18nc("@item:intable numbered lap", "Lap %1", lapDelegate.number)
                             opacity: 0.7
                         }
                         Item {
                             Layout.fillWidth: true
                         }
                         Controls.Label {
-                            text: "+" + stopwatch.formatDuration(splitMs)
+                            text: "+" + root.stopwatch.formatDuration(lapDelegate.splitMs)
                             font.family: root.monospaceFamily
                             color: lapDelegate.isFastest ? Kirigami.Theme.positiveTextColor
                                  : lapDelegate.isSlowest ? Kirigami.Theme.negativeTextColor
                                  : Kirigami.Theme.textColor
                         }
                         Controls.Label {
-                            text: stopwatch.formatDuration(totalMs)
+                            text: root.stopwatch.formatDuration(lapDelegate.totalMs)
                             font.family: root.monospaceFamily
                         }
                     }
