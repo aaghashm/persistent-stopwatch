@@ -45,3 +45,12 @@ ecm_add_test(
         Qt6::Test
 )
 target_include_directories(lapsmodeltest PRIVATE ../src)
+
+ecm_add_test(
+    durationtest.cpp
+    ../src/duration.cpp
+    TEST_NAME durationtest
+    LINK_LIBRARIES
+        Qt6::Test
+)
+target_include_directories(durationtest PRIVATE ../src)
