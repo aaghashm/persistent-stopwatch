@@ -224,6 +224,7 @@ void StopwatchEngine::restoreState()
         m_accumulatedMs = 0;
         m_startedAtMs = 0;
         m_firstStartedAtMs = 0;
+        m_laps->clear();
         setState(Stopped);
         break;
     }

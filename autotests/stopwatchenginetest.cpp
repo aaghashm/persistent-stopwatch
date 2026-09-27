@@ -307,11 +307,28 @@ private Q_SLOTS:
     {
         auto config = KSharedConfig::openStateConfig();
         KConfigGroup group = config->group(u"Stopwatch"_s);
+        group.writeEntry(u"State"_s, static_cast<int>(StopwatchEngine::Paused));
+        group.writeEntry(u"AccumulatedMs"_s, qint64(3000));
         group.writeEntry(u"Laps"_s, QStringList{u"1000"_s, u"garbage"_s, u"2000"_s});
         config->sync();
 
         StopwatchEngine engine(clock());
         QCOMPARE(engine.laps()->rowCount(), 1);
+    }
+
+    void testStoppedStateDropsStrayLaps()
+    {
+        // Stopped with laps can't be produced by the engine, but a hand-edited
+        // or half-written file can. Reset is a no-op when stopped, so the laps
+        // would be stuck on screen forever.
+        auto config = KSharedConfig::openStateConfig();
+        KConfigGroup group = config->group(u"Stopwatch"_s);
+        group.writeEntry(u"State"_s, static_cast<int>(StopwatchEngine::Stopped));
+        group.writeEntry(u"Laps"_s, QStringList{u"1000"_s, u"2000"_s});
+        config->sync();
+
+        StopwatchEngine engine(clock());
+        QCOMPARE(engine.laps()->rowCount(), 0);
     }
 
     void testStateChangedSignals()
