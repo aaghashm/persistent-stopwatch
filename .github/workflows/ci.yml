@@ -9,7 +9,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
     # Fedora has current Qt 6 and KDE Frameworks 6 packages; Ubuntu LTS does not.
     container: fedora:latest
     steps:
