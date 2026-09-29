@@ -51,6 +51,49 @@ static void printReport(const QCommandLineParser &parser, const StopwatchEngine 
     }
 }
 
+// Sets up and runs the main window until the user quits.
+static int runWindow(QCoreApplication &app, KDBusService &service, StopwatchEngine &stopwatch)
+{
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
+    QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
+
+    QQmlApplicationEngine engine;
+
+    // Without the org.kde.desktop style, QML controls fall back to the plain
+    // Qt look and feel out of place on Plasma. Respect an explicit override.
+    if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE") && hasDesktopStyle(engine)) {
+        QQuickStyle::setStyle(u"org.kde.desktop"_s);
+    }
+    KLocalization::setupLocalizedContext(&engine);
+    engine.setInitialProperties({{u"stopwatch"_s, QVariant::fromValue(&stopwatch)}});
+    engine.loadFromModule(u"io.github.aaghashm.persistentstopwatch"_s, u"Main"_s);
+    if (engine.rootObjects().isEmpty()) {
+        return 1;
+    }
+
+    auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst());
+
+    // Size only: on Wayland the compositor decides where windows go anyway.
+    KConfigGroup windowState = KSharedConfig::openStateConfig()->group(u"Window"_s);
+    KWindowConfig::restoreWindowSize(window, windowState);
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, window, [window, windowState]() mutable {
+        KWindowConfig::saveWindowSize(window, windowState);
+        windowState.sync();
+    });
+    QObject::connect(&service, &KDBusService::activateRequested, window, [window, &stopwatch](const QStringList &arguments) {
+        QCommandLineParser remoteParser;
+        CommandLine::addOptions(remoteParser);
+        if (remoteParser.parse(arguments) && CommandLine::hasAction(remoteParser)) {
+            CommandLine::applyActions(remoteParser, stopwatch);
+            return;
+        }
+        KWindowSystem::updateStartupId(window);
+        KWindowSystem::activateWindow(window);
+    });
+
+    return app.exec();
+}
+
 int main(int argc, char *argv[])
 {
     // Command line use has to work over SSH and on a text console, where a
@@ -100,42 +143,5 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    QGuiApplication::setWindowIcon(QIcon::fromTheme(u"io.github.aaghashm.persistentstopwatch"_s, QIcon::fromTheme(u"chronometer"_s)));
-    QGuiApplication::setDesktopFileName(u"io.github.aaghashm.persistentstopwatch"_s);
-
-    QQmlApplicationEngine engine;
-
-    // Without the org.kde.desktop style, QML controls fall back to the plain
-    // Qt look and feel out of place on Plasma. Respect an explicit override.
-    if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE") && hasDesktopStyle(engine)) {
-        QQuickStyle::setStyle(u"org.kde.desktop"_s);
-    }
-    KLocalization::setupLocalizedContext(&engine);
-    engine.setInitialProperties({{u"stopwatch"_s, QVariant::fromValue(&stopwatch)}});
-    engine.loadFromModule(u"io.github.aaghashm.persistentstopwatch"_s, u"Main"_s);
-    if (engine.rootObjects().isEmpty()) {
-        return 1;
-    }
-
-    auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst());
-
-    // Size only: on Wayland the compositor decides where windows go anyway.
-    KConfigGroup windowState = KSharedConfig::openStateConfig()->group(u"Window"_s);
-    KWindowConfig::restoreWindowSize(window, windowState);
-    QObject::connect(app.get(), &QCoreApplication::aboutToQuit, window, [window, windowState]() mutable {
-        KWindowConfig::saveWindowSize(window, windowState);
-        windowState.sync();
-    });
-    QObject::connect(&service, &KDBusService::activateRequested, window, [window, &stopwatch](const QStringList &arguments) {
-        QCommandLineParser remoteParser;
-        CommandLine::addOptions(remoteParser);
-        if (remoteParser.parse(arguments) && CommandLine::hasAction(remoteParser)) {
-            CommandLine::applyActions(remoteParser, stopwatch);
-            return;
-        }
-        KWindowSystem::updateStartupId(window);
-        KWindowSystem::activateWindow(window);
-    });
-
-    return app->exec();
+    return runWindow(*app, service, stopwatch);
 }
