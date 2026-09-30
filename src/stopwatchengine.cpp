@@ -153,6 +153,24 @@ void StopwatchEngine::undoReset()
     Q_EMIT elapsedChanged();
 }
 
+void StopwatchEngine::reload()
+{
+    auto config = KSharedConfig::openStateConfig();
+    config->reparseConfiguration();
+    const KConfigGroup group = config->group(u"Stopwatch"_s);
+    const bool unchanged = group.readEntry(u"State"_s, static_cast<int>(Stopped)) == static_cast<int>(m_state)
+        && group.readEntry(u"AccumulatedMs"_s, qint64(0)) == m_accumulatedMs && group.readEntry(u"StartedAtMs"_s, qint64(0)) == m_startedAtMs
+        && group.readEntry(u"Laps"_s, QStringList()) == m_laps->serialized();
+    if (unchanged) {
+        return;
+    }
+
+    dropUndo();
+    m_ticker.stop();
+    restoreState();
+    Q_EMIT elapsedChanged();
+}
+
 void StopwatchEngine::dropUndo()
 {
     if (m_beforeReset) {
