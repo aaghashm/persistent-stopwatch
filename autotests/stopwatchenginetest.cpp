@@ -331,6 +331,38 @@ private Q_SLOTS:
         QCOMPARE(engine.laps()->rowCount(), 0);
     }
 
+    void testReloadPicksUpAnotherProcess()
+    {
+        StopwatchEngine window(clock());
+        StopwatchEngine commandLine(clock());
+
+        commandLine.start();
+        m_fakeNowMs += 2000;
+        commandLine.lap();
+
+        QSignalSpy spy(&window, &StopwatchEngine::stateChanged);
+        window.reload();
+        QCOMPARE(window.state(), StopwatchEngine::Running);
+        QCOMPARE(window.elapsedMs(), 2000);
+        QCOMPARE(window.laps()->rowCount(), 1);
+        QCOMPARE(spy.count(), 1);
+
+        commandLine.pause();
+        window.reload();
+        QCOMPARE(window.state(), StopwatchEngine::Paused);
+    }
+
+    void testReloadOfOwnSaveKeepsUndo()
+    {
+        StopwatchEngine engine(clock());
+        engine.start();
+        m_fakeNowMs += 2000;
+        engine.reset();
+
+        engine.reload();
+        QVERIFY(engine.canUndoReset());
+    }
+
     void testStateChangedSignals()
     {
         StopwatchEngine engine(clock());

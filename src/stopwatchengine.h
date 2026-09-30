@@ -62,6 +62,11 @@ public:
 
     Q_INVOKABLE QString formatDuration(qint64 ms) const;
 
+    // Picks up a state written by another process, e.g. the command line
+    // while the window is open. Does nothing if the saved state is the one
+    // this engine wrote, so it's safe to call after our own saves.
+    void reload();
+
 Q_SIGNALS:
     void stateChanged();
     void elapsedChanged();
