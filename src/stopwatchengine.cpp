@@ -4,6 +4,7 @@
 #include "stopwatchengine.h"
 
 #include <QDateTime>
+#include <QFileInfo>
 
 #include <KConfigGroup>
 #include <KSharedConfig>
@@ -169,6 +170,27 @@ void StopwatchEngine::reload()
     m_ticker.stop();
     restoreState();
     Q_EMIT elapsedChanged();
+}
+
+void StopwatchEngine::watchForExternalChanges()
+{
+    // openStateConfig() is opened by full path, so name() is the path.
+    const QString file = KSharedConfig::openStateConfig()->name();
+    // KConfig saves by writing a new file and renaming it over the old one,
+    // which ends a watch on the file itself. Watching the directory catches
+    // that, and the file is re-added each time.
+    m_watcher.addPath(QFileInfo(file).absolutePath());
+    if (QFileInfo::exists(file)) {
+        m_watcher.addPath(file);
+    }
+    const auto onChange = [this, file] {
+        if (QFileInfo::exists(file) && !m_watcher.files().contains(file)) {
+            m_watcher.addPath(file);
+        }
+        reload();
+    };
+    connect(&m_watcher, &QFileSystemWatcher::fileChanged, this, onChange);
+    connect(&m_watcher, &QFileSystemWatcher::directoryChanged, this, onChange);
 }
 
 void StopwatchEngine::dropUndo()

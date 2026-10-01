@@ -4,6 +4,7 @@
 #pragma once
 
 #include <QDateTime>
+#include <QFileSystemWatcher>
 #include <QObject>
 #include <QTimer>
 #include <qqmlregistration.h>
@@ -66,6 +67,8 @@ public:
     // while the window is open. Does nothing if the saved state is the one
     // this engine wrote, so it's safe to call after our own saves.
     void reload();
+    // Calls reload() whenever the state file changes on disk.
+    void watchForExternalChanges();
 
 Q_SIGNALS:
     void stateChanged();
@@ -89,6 +92,7 @@ private:
     std::function<qint64()> m_now;
     LapsModel *const m_laps;
     QTimer m_ticker;
+    QFileSystemWatcher m_watcher;
     State m_state = Stopped;
     qint64 m_accumulatedMs = 0;
     qint64 m_startedAtMs = 0;
