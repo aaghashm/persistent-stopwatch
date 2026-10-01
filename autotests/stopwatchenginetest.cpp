@@ -363,6 +363,23 @@ private Q_SLOTS:
         QVERIFY(engine.canUndoReset());
     }
 
+    void testWatcherFollowsAnotherProcess()
+    {
+        StopwatchEngine window(clock());
+        window.watchForExternalChanges();
+        StopwatchEngine commandLine(clock());
+
+        commandLine.start();
+        QTRY_COMPARE(window.state(), StopwatchEngine::Running);
+
+        m_fakeNowMs += 1000;
+        commandLine.lap();
+        QTRY_COMPARE(window.laps()->rowCount(), 1);
+
+        commandLine.pause();
+        QTRY_COMPARE(window.state(), StopwatchEngine::Paused);
+    }
+
     void testStateChangedSignals()
     {
         StopwatchEngine engine(clock());
