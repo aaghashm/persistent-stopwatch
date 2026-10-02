@@ -61,8 +61,8 @@ global shortcut in System Settings → Keyboard → Shortcuts (the launcher's
 "Start or Pause" action) and you can time things without touching the
 window at all.
 
-If the window is open, the command is sent to it. If not, the saved state
-is updated and nothing is shown. See `man persistent-stopwatch`.
+Commands update the saved state directly and never open a window. If the
+window is open, it notices and follows along. See `man persistent-stopwatch`.
 
 ## How the code is laid out
 

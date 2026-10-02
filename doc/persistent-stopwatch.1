@@ -53,9 +53,9 @@ Action options can be combined. They are applied in the order reset, start,
 toggle, lap, pause, so
 .B "\-\-reset \-\-start"
 always restarts from zero.
-If the window is open, actions are sent to it.
-Otherwise they are applied to the saved state and the program exits without
-opening a window.
+Actions are applied to the saved state, and the program exits without
+opening a window. If the window is open, it notices the change and
+follows along.
 .SH KEYBOARD SHORTCUTS
 In the window:
 .TP
