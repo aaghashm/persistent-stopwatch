@@ -80,13 +80,7 @@ static int runWindow(QCoreApplication &app, KDBusService &service, StopwatchEngi
         KWindowConfig::saveWindowSize(window, windowState);
         windowState.sync();
     });
-    QObject::connect(&service, &KDBusService::activateRequested, window, [window, &stopwatch](const QStringList &arguments) {
-        QCommandLineParser remoteParser;
-        CommandLine::addOptions(remoteParser);
-        if (remoteParser.parse(arguments) && CommandLine::hasAction(remoteParser)) {
-            CommandLine::applyActions(remoteParser, stopwatch);
-            return;
-        }
+    QObject::connect(&service, &KDBusService::activateRequested, window, [window] {
         KWindowSystem::updateStartupId(window);
         KWindowSystem::activateWindow(window);
     });
@@ -119,29 +113,21 @@ int main(int argc, char *argv[])
     parser.process(*app);
     aboutData.processCommandLine(&parser);
 
-    // Reading needs no coordination: whoever owns the state syncs it to disk
-    // on every change, so the file is always current.
-    const bool wantsReport = CommandLine::wantsStatus(parser) || CommandLine::wantsLaps(parser) || CommandLine::wantsJson(parser);
-    if (wantsReport && !CommandLine::hasAction(parser)) {
-        const StopwatchEngine stopwatch;
-        printReport(parser, stopwatch);
-        return 0;
-    }
-
-    // Two windows would each hold their own copy of the state and overwrite
-    // each other's saves. A second launch hands its arguments to the first
-    // one and exits here. Without a session bus we simply run unguarded.
-    KDBusService service(KDBusService::Unique | KDBusService::NoExitOnFailure);
-
-    StopwatchEngine stopwatch;
-
-    // Nothing else is running, so the state on disk is ours: apply the
-    // actions and leave without ever showing a window.
-    if (CommandLine::hasAction(parser)) {
+    // The command line never talks to the window. It works on the state file
+    // directly, and an open window watches that file and follows along, so
+    // this also works with no session bus and can print the result.
+    if (CommandLine::hasAction(parser) || CommandLine::wantsStatus(parser) || CommandLine::wantsLaps(parser) || CommandLine::wantsJson(parser)) {
+        StopwatchEngine stopwatch;
         CommandLine::applyActions(parser, stopwatch);
         printReport(parser, stopwatch);
         return 0;
     }
+
+    // A second launch raises the window that's already open and exits here.
+    KDBusService service(KDBusService::Unique | KDBusService::NoExitOnFailure);
+
+    StopwatchEngine stopwatch;
+    stopwatch.watchForExternalChanges();
 
     return runWindow(*app, service, stopwatch);
 }
