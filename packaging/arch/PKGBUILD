@@ -8,7 +8,7 @@ pkgrel=1
 pkgdesc='Stopwatch that survives reboots'
 arch=(x86_64 aarch64)
 url='https://github.com/aaghashm/persistent-stopwatch'
-license=(GPL-2.0-or-later)
+license=('GPL-2.0-or-later AND BSD-3-Clause AND MIT AND CC0-1.0')
 depends=(glibc libstdc++ hicolor-icon-theme kconfig kcoreaddons kcrash kdbusaddons ki18n kirigami kwindowsystem qt6-base qt6-declarative)
 makedepends=(extra-cmake-modules git)
 optdepends=('qqc2-desktop-style: native Plasma look and feel')
@@ -29,4 +29,7 @@ check() {
 
 package() {
   DESTDIR="$pkgdir" cmake --install build
+  # GPL is in Arch's common licenses; the build files and metadata use
+  # BSD-3-Clause, MIT and CC0, which must ship with the package.
+  install -Dm644 -t "$pkgdir/usr/share/licenses/$pkgname" $pkgname/LICENSES/{BSD-3-Clause,MIT,CC0-1.0}.txt
 }
