@@ -9,8 +9,8 @@ Release:        1%{?dist}
 Summary:        Stopwatch that survives reboots
 
 License:        GPL-2.0-or-later AND BSD-3-Clause AND CC0-1.0 AND MIT
-URL:            https://github.com/aaghashm/persistent-stopwatch
-Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+URL:            https://aaghashm.github.io/persistent-stopwatch/
+Source0:        https://github.com/aaghashm/persistent-stopwatch/archive/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++

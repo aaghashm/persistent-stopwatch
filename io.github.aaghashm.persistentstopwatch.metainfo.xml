@@ -40,7 +40,9 @@ SPDX-License-Identifier: CC0-1.0
       <image>https://raw.githubusercontent.com/aaghashm/persistent-stopwatch/main/screenshots/main-dark.png</image>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://github.com/aaghashm/persistent-stopwatch</url>
+  <url type="homepage">https://aaghashm.github.io/persistent-stopwatch/</url>
+  <url type="help">https://aaghashm.github.io/persistent-stopwatch/#usage</url>
+  <url type="contribute">https://github.com/aaghashm/persistent-stopwatch/blob/main/CONTRIBUTING.md</url>
   <url type="bugtracker">https://github.com/aaghashm/persistent-stopwatch/issues</url>
   <url type="vcs-browser">https://github.com/aaghashm/persistent-stopwatch</url>
   <supports>
