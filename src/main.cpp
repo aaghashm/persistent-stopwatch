@@ -103,6 +103,8 @@ int main(int argc, char *argv[])
                          i18n("Stopwatch that keeps counting across restarts and reboots"),
                          KAboutLicense::GPL_V2,
                          i18n("© 2026 Aaghash Murugesan"));
+    aboutData.setHomepage(u"https://aaghashm.github.io/persistent-stopwatch/"_s);
+    aboutData.setBugAddress(QByteArrayLiteral("https://github.com/aaghashm/persistent-stopwatch/issues"));
     aboutData.addAuthor(i18nc("@info:credit", "Aaghash Murugesan"), i18nc("@info:credit role", "Maintainer"), u"aaghashm@gmail.com"_s);
     KAboutData::setApplicationData(aboutData);
     KCrash::initialize();
