@@ -75,6 +75,24 @@ private Q_SLOTS:
         QVERIFY(isFastest(model, 3));
     }
 
+    void testLastTotal()
+    {
+        LapsModel model;
+        QSignalSpy spy(&model, &LapsModel::lastTotalMsChanged);
+        QCOMPARE(model.lastTotalMs(), 0);
+
+        model.addLap(1000);
+        model.addLap(2500);
+        QCOMPARE(model.lastTotalMs(), 2500);
+
+        model.clear();
+        QCOMPARE(model.lastTotalMs(), 0);
+
+        model.restore({u"700"_s});
+        QCOMPARE(model.lastTotalMs(), 700);
+        QCOMPARE(spy.count(), 4);
+    }
+
 private:
     // Lap numbers start at 1; the model shows the newest lap in row 0.
     static bool isFastest(const LapsModel &model, int lap)
