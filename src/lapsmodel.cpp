@@ -89,6 +89,11 @@ qsizetype LapsModel::slowestIndex() const
     return worst;
 }
 
+qint64 LapsModel::lastTotalMs() const
+{
+    return m_totals.isEmpty() ? 0 : m_totals.constLast();
+}
+
 void LapsModel::addLap(qint64 totalMs)
 {
     beginInsertRows(QModelIndex(), 0, 0);
@@ -99,6 +104,7 @@ void LapsModel::addLap(qint64 totalMs)
     if (m_totals.size() > 1) {
         Q_EMIT dataChanged(index(1, 0), index(rowCount() - 1, 0), {IsFastestRole, IsSlowestRole});
     }
+    Q_EMIT lastTotalMsChanged();
 }
 
 void LapsModel::clear()
@@ -109,6 +115,7 @@ void LapsModel::clear()
     beginResetModel();
     m_totals.clear();
     endResetModel();
+    Q_EMIT lastTotalMsChanged();
 }
 
 QString LapsModel::toTable() const
@@ -153,4 +160,5 @@ void LapsModel::restore(const QStringList &totals)
         previous = total;
     }
     endResetModel();
+    Q_EMIT lastTotalMsChanged();
 }

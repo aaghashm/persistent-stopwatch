@@ -18,6 +18,9 @@ class LapsModel : public QAbstractListModel
     QML_ELEMENT
     QML_UNCREATABLE("Owned by StopwatchEngine")
 
+    // Where the lap in progress started: the last lap's total, or 0.
+    Q_PROPERTY(qint64 lastTotalMs READ lastTotalMs NOTIFY lastTotalMsChanged)
+
 public:
     enum Roles {
         NumberRole = Qt::UserRole + 1,
@@ -33,6 +36,8 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    qint64 lastTotalMs() const;
+
     void addLap(qint64 totalMs);
     void clear();
 
@@ -43,6 +48,9 @@ public:
 
     QStringList serialized() const;
     void restore(const QStringList &totals);
+
+Q_SIGNALS:
+    void lastTotalMsChanged();
 
 private:
     qint64 splitAt(qsizetype i) const;
