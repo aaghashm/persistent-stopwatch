@@ -141,6 +141,38 @@ Kirigami.ApplicationWindow {
                 clip: true
                 model: root.stopwatch.laps
 
+                // The lap in progress, ticking, above the finished ones.
+                header: Controls.ItemDelegate {
+                    width: ListView.view.width
+                    visible: root.stopwatch.state !== StopwatchEngine.Stopped
+                    height: visible ? implicitHeight : 0
+                    hoverEnabled: false
+                    Accessible.name: i18nc("@info accessible name, %1 is a duration", "Current lap, %1",
+                                           root.stopwatch.formatDuration(root.stopwatch.elapsedMs - root.stopwatch.laps.lastTotalMs))
+
+                    contentItem: RowLayout {
+                        spacing: Kirigami.Units.largeSpacing
+
+                        Controls.Label {
+                            text: i18nc("@item:intable numbered lap", "Lap %1", lapsView.count + 1)
+                            opacity: 0.7
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                        }
+                        Controls.Label {
+                            text: "+" + root.stopwatch.formatDuration(root.stopwatch.elapsedMs - root.stopwatch.laps.lastTotalMs)
+                            font.family: root.monospaceFamily
+                            opacity: 0.7
+                        }
+                        Controls.Label {
+                            text: root.stopwatch.formatDuration(root.stopwatch.elapsedMs)
+                            font.family: root.monospaceFamily
+                            opacity: 0.7
+                        }
+                    }
+                }
+
                 delegate: Controls.ItemDelegate {
                     id: lapDelegate
 
@@ -181,10 +213,10 @@ Kirigami.ApplicationWindow {
                 Kirigami.PlaceholderMessage {
                     anchors.centerIn: parent
                     width: parent.width - Kirigami.Units.gridUnit * 4
-                    visible: lapsView.count === 0
+                    visible: lapsView.count === 0 && root.stopwatch.state === StopwatchEngine.Stopped
                     icon.name: "chronometer"
                     text: i18nc("@info:placeholder", "No laps yet")
-                    explanation: i18nc("@info:placeholder", "Press Lap while the stopwatch is running")
+                    explanation: i18nc("@info:placeholder", "Start the stopwatch, then press Lap")
                 }
             }
         }
