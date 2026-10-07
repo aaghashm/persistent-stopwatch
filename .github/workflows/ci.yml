@@ -39,6 +39,15 @@ jobs:
       - name: qmllint
         run: cmake --build build --target all_qmllint
 
+      - name: Open the window
+        # Unit tests don't load the QML. Run the real app for a few seconds
+        # and fail on any QML error, e.g. a binding to something missing.
+        run: |
+          dnf install -y --setopt=install_weak_deps=False kf6-qqc2-desktop-style
+          QT_QPA_PLATFORM=offscreen timeout 5 build/bin/persistent-stopwatch > launch.log 2>&1 || test $? -eq 124
+          cat launch.log
+          ! grep -E "qrc:|TypeError|ReferenceError|is not installed" launch.log
+
   lint:
     runs-on: ubuntu-latest
     container: fedora:latest
