@@ -70,6 +70,17 @@ Reset. A notification offers to undo it.
 .TP
 .B Ctrl+Z
 Undo the last reset.
+.SH EXIT STATUS
+0 on success, including actions that do nothing in the current state
+(for example
+.B \-\-lap
+while paused). Nonzero for an unknown option, or if the window fails to
+load.
+.SH ENVIRONMENT
+.TP
+.B QT_QUICK_CONTROLS_STYLE
+Overrides the Qt Quick Controls style. By default the KDE desktop style is
+used when it is installed.
 .SH FILES
 .TP
 .I ~/.local/state/persistentstopwatchstaterc
