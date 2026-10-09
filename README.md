@@ -64,6 +64,23 @@ window at all.
 Commands update the saved state directly and never open a window. If the
 window is open, it notices and follows along. See `man persistent-stopwatch`.
 
+## Questions
+
+**Does it keep counting while the computer is off?** Yes. It doesn't
+count at all; it remembers when you started and subtracts. Whatever the
+machine was doing in between, the answer is right when you look again.
+
+**What if the clock changes?** Moving the system clock forward makes the
+time jump forward too, since that's indistinguishable from time passing.
+Moving it backward never makes the time shrink; it's clamped.
+
+**Can I run it on GNOME or another desktop?** Yes. It needs the KDE
+Frameworks libraries (the packages pull them in) but not Plasma. Without
+the KDE desktop style installed it uses Qt's default look.
+
+**Where is the data?** `~/.local/state/persistentstopwatchstaterc`, a
+small text file. Delete it to start from scratch.
+
 ## How the code is laid out
 
 ```
