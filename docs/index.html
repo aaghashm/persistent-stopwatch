@@ -39,7 +39,7 @@ SPDX-License-Identifier: CC0-1.0
       <h2>What it does</h2>
       <ul class="features">
         <li><strong>Survives everything.</strong> Restarts, crashes, suspend and reboots do not stop the clock.</li>
-        <li><strong>Laps.</strong> Splits and totals, fastest in green, slowest in red, copy them all as a table.</li>
+        <li><strong>Laps.</strong> The current lap ticks along on top; splits and totals below, fastest in green, slowest in red; copy them all as a table.</li>
         <li><strong>Undo.</strong> Reset by accident? Ctrl+Z brings back the time and the laps.</li>
         <li><strong>Command line.</strong> Start, pause, lap, reset and read the time without opening a window, even over SSH.</li>
         <li><strong>Native on Plasma.</strong> Built with Kirigami, follows your theme, fonts and icons.</li>
@@ -138,7 +138,17 @@ persistent-stopwatch --laps
         from those. A wall clock that jumps backward (NTP, a dead RTC battery) is clamped so the
         time can never shrink.
       </p>
-      <p>The state lives in <code>~/.local/state/persistentstopwatchstaterc</code>.</p>
+      <p>The state lives in <code>~/.local/state/persistentstopwatchstaterc</code>. The window watches that file, which is how it follows commands typed in a terminal.</p>
+    </section>
+
+    <section id="questions">
+      <h2>Questions</h2>
+      <h3>Does it keep counting while the computer is off?</h3>
+      <p>Yes. It doesn't count at all; it remembers when you started and subtracts.</p>
+      <h3>What if the system clock changes?</h3>
+      <p>Moving it forward looks exactly like time passing, so the stopwatch moves forward too. Moving it backward never makes the time shrink.</p>
+      <h3>Does it need Plasma?</h3>
+      <p>No. It needs the KDE Frameworks libraries, which the packages pull in, and runs on GNOME and other desktops too.</p>
     </section>
   </main>
 
