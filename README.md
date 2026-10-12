@@ -88,7 +88,9 @@ src/
   stopwatchengine.{h,cpp}   The heart. A small state machine (Stopped,
                             Running, Paused) that persists timestamps
                             through KConfig and derives elapsed time on
-                            demand. Knows nothing about the UI.
+                            demand. Watches the state file so the window
+                            follows the command line. Knows nothing about
+                            the UI.
   lapsmodel.{h,cpp}         QAbstractListModel holding lap totals. Splits,
                             fastest and slowest are derived from them.
                             Restored data is sanity-checked before use.
@@ -97,8 +99,9 @@ src/
                             display, actions, and the lap list.
   commandline.{h,cpp}       The --start/--pause/--lap/--reset/--status
                             options, shared by main() and the tests.
-  main.cpp                  Startup wiring: KAboutData, single instance,
-                            command line, QML engine.
+  main.cpp                  Startup: command line cases first (no window,
+                            no display needed), otherwise a single
+                            instance window.
 autotests/
   stopwatchenginetest.cpp   Unit tests for the engine. The engine takes an
                             injectable clock, so tests simulate restarts,
@@ -106,9 +109,13 @@ autotests/
                             ever sleeping.
   lapsmodeltest.cpp         Lap marks, ties, and model consistency.
   commandlinetest.cpp       Flag handling and output formats.
+  durationtest.cpp          The time format, including very long runs.
 icons/                      The app icon (Breeze-style SVG).
 doc/                        Man page.
 completions/                bash, zsh and fish completions.
+packaging/                  RPM spec and Arch PKGBUILD (the .deb comes
+                            from CPack, see CMakeLists.txt).
+docs/                       The website and install.sh.
 LICENSES/                   Full license texts, per the REUSE spec.
 ```
 
@@ -117,11 +124,8 @@ environments and app stores read: the launcher entry and the store listing.
 
 ## Where the project stands
 
-Working: the engine with unit tests, the Kirigami UI, persistence across
-restarts and reboots, app icon, desktop integration files.
-
-Usable day to day. Next: packages for Debian and Ubuntu, screenshots and
-a small website.
+Feature complete for what it set out to do. Ideas for later: a timer and
+alarms (KClock covers those well already), and translations.
 
 ## Installing
 
