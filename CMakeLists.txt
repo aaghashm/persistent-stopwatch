@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(persistent-stopwatch VERSION 0.3.0 LANGUAGES CXX)
+project(persistent-stopwatch VERSION 1.0.0 LANGUAGES CXX)
 
 set(QT_MIN_VERSION "6.6.0")
 set(KF_MIN_VERSION "6.0.0")

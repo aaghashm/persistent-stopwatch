@@ -4,7 +4,7 @@
 %global appid io.github.aaghashm.persistentstopwatch
 
 Name:           persistent-stopwatch
-Version:        0.3.0
+Version:        1.0.0
 Release:        1%{?dist}
 Summary:        Stopwatch that survives reboots
 
@@ -80,6 +80,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_kf6_metainfodir}/%{appid}.m
 %{fish_completions_dir}/%{name}.fish
 
 %changelog
+* Wed Oct 14 2026 Aaghash Murugesan <aaghashm@gmail.com> - 1.0.0-1
+- Update to 1.0.0
+
 * Sat Aug 29 2026 Aaghash Murugesan <aaghashm@gmail.com> - 0.3.0-1
 - Update to 0.3.0
 
