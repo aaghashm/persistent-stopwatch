@@ -101,7 +101,7 @@ jobs:
           persistent-stopwatch --reset --start --status
           persistent-stopwatch --pause --status
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: rpm
           path: |
@@ -141,7 +141,7 @@ jobs:
           persistent-stopwatch --reset --start --status
           persistent-stopwatch --pause --status
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: deb
           path: build/persistent-stopwatch_*.deb
