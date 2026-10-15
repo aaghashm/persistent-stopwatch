@@ -25,7 +25,7 @@ jobs:
             kf6-kcrash-devel kf6-kdbusaddons-devel kf6-kwindowsystem-devel \
             appstream
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Configure
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
@@ -55,7 +55,7 @@ jobs:
       - name: Install tools
         run: dnf install -y --setopt=install_weak_deps=False git reuse appstream desktop-file-utils clang-tools-extra ShellCheck
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: REUSE compliance
         run: reuse lint
@@ -79,7 +79,7 @@ jobs:
       - name: Install tools
         run: dnf install -y --setopt=install_weak_deps=False git rpm-build rpmlint dnf-plugins-core
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build the RPM from this commit
         run: |
@@ -121,7 +121,7 @@ jobs:
             libkf6config-dev libkf6coreaddons-dev libkf6crash-dev libkf6dbusaddons-dev \
             libkf6i18n-dev libkf6windowsystem-dev
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build and test
         run: |
