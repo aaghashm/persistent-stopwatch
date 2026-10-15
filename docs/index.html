@@ -9,128 +9,194 @@ SPDX-License-Identifier: CC0-1.0
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Persistent Stopwatch</title>
   <meta name="description" content="A stopwatch for KDE Plasma that keeps counting across restarts and reboots, and works from the command line.">
+  <meta name="color-scheme" content="light dark">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="hero">
-    <img class="hero-icon" src="icon.svg" alt="" width="96" height="96">
-    <h1>Persistent Stopwatch</h1>
-    <p class="tagline">A stopwatch for Linux that never loses time.</p>
-    <p class="lede">
-      Close it, suspend, reboot, come back days later: the time is still right.
-      It stores the moment you pressed start instead of counting ticks, so there
-      is nothing running that can be stopped.
-    </p>
-    <nav class="hero-links">
-      <a class="button primary" href="#install">Install</a>
-      <a class="button" href="https://github.com/aaghashm/persistent-stopwatch">Source code</a>
-    </nav>
-    <figure class="shot">
-      <picture>
-        <source srcset="screenshots/main-dark.png" media="(prefers-color-scheme: dark)">
-        <img src="screenshots/main.png" alt="The stopwatch window with a running time and a list of laps" width="560" height="540">
-      </picture>
-    </figure>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="bar">
+    <div class="wrap bar-inner">
+      <a class="brand" href="#top"><img src="icon.svg" alt="" width="28" height="28"> Persistent Stopwatch</a>
+      <nav aria-label="Sections">
+        <a href="#install">Install</a>
+        <a href="#usage">Command line</a>
+        <a href="https://github.com/aaghashm/persistent-stopwatch">GitHub</a>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section id="features">
-      <h2>What it does</h2>
+  <main id="main">
+    <div class="wrap hero" id="top">
+      <div class="hero-text">
+        <img class="hero-icon" src="icon.svg" alt="" width="72" height="72">
+        <h1>Persistent Stopwatch</h1>
+        <p class="tagline">A stopwatch for Linux that never loses time.</p>
+        <p>
+          Close it, suspend, reboot, come back days later: the time is still right.
+          It stores the moment you pressed start instead of counting ticks, so there
+          is nothing running that can be stopped. Made for KDE Plasma, and fully
+          usable from a terminal.
+        </p>
+
+        <h2 class="install-label" id="quick-install">Install</h2>
+        <div class="code hero-code"><pre><code>curl -fsSL https://aaghashm.github.io/<wbr><span class="nb">persistent-stopwatch/</span><wbr>install.sh | sh</code></pre><button class="copy" type="button" aria-label="Copy install command">Copy</button></div>
+        <p class="small">
+          Fedora 44+, Debian 13, Ubuntu 25.04+ and Arch.
+          It picks the right package and hands it to your package manager
+          (<a href="install.sh">read install.sh</a>).
+          <a href="#install">Other ways to install</a>.
+        </p>
+        <p class="small muted">
+          Version 1.0.0, released October 14, 2026 ·
+          <a href="https://github.com/aaghashm/persistent-stopwatch/releases/latest">Release notes</a>
+        </p>
+      </div>
+
+      <figure class="shot">
+        <picture>
+          <source srcset="screenshots/main-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="screenshots/main.png" alt="The stopwatch window showing 01:23:49.6, started 9/5/26 9:01 AM, with seven laps listed below; one lap time is green and one is red" width="560" height="540">
+        </picture>
+        <figcaption>A run with seven laps. Fastest in green, slowest in red.</figcaption>
+      </figure>
+    </div>
+
+    <section class="wrap" id="features" aria-labelledby="features-h">
+      <h2 id="features-h">What it does</h2>
       <ul class="features">
-        <li><strong>Survives everything.</strong> Restarts, crashes, suspend and reboots do not stop the clock.</li>
-        <li><strong>Laps.</strong> The current lap ticks along on top; splits and totals below, fastest in green, slowest in red; copy them all as a table.</li>
-        <li><strong>Undo.</strong> Reset by accident? Ctrl+Z brings back the time and the laps.</li>
-        <li><strong>Command line.</strong> Start, pause, lap, reset and read the time without opening a window, even over SSH.</li>
-        <li><strong>Native on Plasma.</strong> Built with Kirigami, follows your theme, fonts and icons.</li>
+        <li>
+          <h3>Keeps time through anything</h3>
+          <p>Closing the window, crashes, suspend and reboots do not stop the clock.</p>
+        </li>
+        <li>
+          <h3>Laps</h3>
+          <p>The current lap ticks along on top, finished laps below with splits and totals. Copy them all as a table.</p>
+        </li>
+        <li>
+          <h3>Undo a reset</h3>
+          <p>Reset by accident? <kbd>Ctrl</kbd>+<kbd>Z</kbd> brings back the time and the laps.</p>
+        </li>
+        <li>
+          <h3>Command line</h3>
+          <p>Start, pause, lap, reset and read the time without opening a window, even over SSH.</p>
+        </li>
+        <li>
+          <h3>Launcher menu</h3>
+          <p>Start or pause, lap and reset from the launcher's right-click menu.</p>
+        </li>
+        <li>
+          <h3>Native on Plasma</h3>
+          <p>Built with Kirigami. Follows your theme, fonts and icons.</p>
+        </li>
       </ul>
     </section>
 
-    <section id="install">
-      <h2>Install</h2>
+    <section class="wrap" id="usage" aria-labelledby="usage-h">
+      <h2 id="usage-h">Command line</h2>
+      <p>
+        The window is optional. Commands change the saved state, print what you ask for
+        and exit. If the window is open, it follows along.
+      </p>
 
-      <h3>One command</h3>
-      <p>Detects Fedora, Debian, Ubuntu or Arch and installs the right package:</p>
-      <div class="code"><pre><code>curl -fsSL https://aaghashm.github.io/persistent-stopwatch/install.sh | sh</code></pre><button class="copy" type="button">Copy</button></div>
-      <p class="note">Prefer to see what runs first? <a href="install.sh">Read install.sh</a>. Or use your package manager directly:</p>
+      <div class="cli-grid">
+        <div>
+          <h3>Time a build</h3>
+          <div class="code"><pre><code>persistent-stopwatch --reset --start
+make
+persistent-stopwatch --pause --status
+<span class="out">Paused 00:04:12.7 (started 2026-09-05T10:31:08)</span></code></pre><button class="copy" type="button" aria-label="Copy build example">Copy</button></div>
 
-      <div class="tabs" role="tablist">
-        <button role="tab" aria-selected="true" aria-controls="tab-fedora" id="t-fedora">Fedora</button>
-        <button role="tab" aria-selected="false" aria-controls="tab-debian" id="t-debian">Debian / Ubuntu</button>
-        <button role="tab" aria-selected="false" aria-controls="tab-arch" id="t-arch">Arch</button>
-        <button role="tab" aria-selected="false" aria-controls="tab-source" id="t-source">From source</button>
+          <h3>Laps</h3>
+          <p class="small">One per line, tab separated: number, the lap's own time, total.</p>
+          <div class="code"><pre><code>persistent-stopwatch --laps
+<span class="out">1	00:01:02.4	00:01:02.4
+2	00:00:58.9	00:02:01.3</span></code></pre><button class="copy" type="button" aria-label="Copy laps example">Copy</button></div>
+
+          <h3>Elapsed minutes for a status bar</h3>
+          <div class="code"><pre><code>persistent-stopwatch --json | jq '.elapsedMs / 60000 | floor'</code></pre><button class="copy" type="button" aria-label="Copy JSON example">Copy</button></div>
+        </div>
+
+        <div>
+          <h3>Options</h3>
+          <table class="options">
+            <thead><tr><th scope="col">Option</th><th scope="col">Does</th></tr></thead>
+            <tbody>
+              <tr><td><code>--start</code></td><td>start, or resume if paused</td></tr>
+              <tr><td><code>--pause</code></td><td>pause</td></tr>
+              <tr><td><code>--toggle</code></td><td>pause if running, start otherwise</td></tr>
+              <tr><td><code>--lap</code></td><td>record a lap (while running)</td></tr>
+              <tr><td><code>--reset</code></td><td>back to zero, laps cleared</td></tr>
+              <tr><td><code>--status</code></td><td>print state, time and start time</td></tr>
+              <tr><td><code>--laps</code></td><td>print the laps</td></tr>
+              <tr><td><code>--json</code></td><td>state, time, start and laps as JSON</td></tr>
+            </tbody>
+          </table>
+          <p class="small">
+            Options can be combined; <code>--reset --start</code> always restarts from zero.
+            Bind <code>persistent-stopwatch --toggle</code> to a global shortcut
+            (System Settings, Keyboard, Shortcuts) to time things without touching the window.
+            <code>man persistent-stopwatch</code> has the rest.
+          </p>
+
+          <h3>In the window</h3>
+          <dl class="keys">
+            <dt><kbd>Space</kbd></dt><dd>start or pause</dd>
+            <dt><kbd>L</kbd></dt><dd>lap</dd>
+            <dt><kbd>R</kbd></dt><dd>reset</dd>
+            <dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>undo the reset</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="install" aria-labelledby="install-h">
+      <h2 id="install-h">Other ways to install</h2>
+      <p>
+        The <a href="#quick-install">one-line installer</a> only picks the package for your system.
+        To do the same by hand, use your package manager directly. Packages for x86_64 and aarch64
+        are attached to every <a href="https://github.com/aaghashm/persistent-stopwatch/releases/latest">release</a>.
+      </p>
+
+      <div class="tabs" role="tablist" aria-label="Distribution">
+        <button type="button" role="tab" aria-selected="true" aria-controls="tab-fedora" id="t-fedora">Fedora</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-debian" id="t-debian">Debian / Ubuntu</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-arch" id="t-arch">Arch</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="tab-source" id="t-source">From source</button>
       </div>
 
-      <div class="panel" role="tabpanel" id="tab-fedora" aria-labelledby="t-fedora">
+      <div class="panel" role="tabpanel" id="tab-fedora" aria-labelledby="t-fedora" tabindex="0">
         <p>Fedora 44 or newer. dnf installs straight from the release URL and pulls in the KDE libraries:</p>
-        <div class="code"><pre><code>sudo dnf install https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch.$(uname -m).rpm</code></pre><button class="copy" type="button">Copy</button></div>
+        <div class="code"><pre><code>sudo dnf install https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch.$(uname -m).rpm</code></pre><button class="copy" type="button" aria-label="Copy Fedora command">Copy</button></div>
       </div>
 
-      <div class="panel" role="tabpanel" id="tab-debian" aria-labelledby="t-debian" hidden>
+      <div class="panel" role="tabpanel" id="tab-debian" aria-labelledby="t-debian" tabindex="0">
         <p>Debian 13, Ubuntu 25.04 or newer (they ship KDE Frameworks 6):</p>
         <div class="code"><pre><code>arch=$(dpkg --print-architecture)
 curl -fLO https://github.com/aaghashm/persistent-stopwatch/releases/latest/download/persistent-stopwatch_$arch.deb
-sudo apt install ./persistent-stopwatch_$arch.deb</code></pre><button class="copy" type="button">Copy</button></div>
+sudo apt install ./persistent-stopwatch_$arch.deb</code></pre><button class="copy" type="button" aria-label="Copy Debian and Ubuntu commands">Copy</button></div>
       </div>
 
-      <div class="panel" role="tabpanel" id="tab-arch" aria-labelledby="t-arch" hidden>
-        <p>Build the package with the PKGBUILD in the repository:</p>
+      <div class="panel" role="tabpanel" id="tab-arch" aria-labelledby="t-arch" tabindex="0">
+        <p>Build the package with the PKGBUILD in the repository. Needs git and base-devel. Run as your normal user, not root:</p>
         <div class="code"><pre><code>git clone https://github.com/aaghashm/persistent-stopwatch
 cd persistent-stopwatch/packaging/arch
-makepkg -si</code></pre><button class="copy" type="button">Copy</button></div>
+makepkg -si</code></pre><button class="copy" type="button" aria-label="Copy Arch commands">Copy</button></div>
       </div>
 
-      <div class="panel" role="tabpanel" id="tab-source" aria-labelledby="t-source" hidden>
-        <p>Needs CMake, extra-cmake-modules, Qt 6.6+ and KDE Frameworks 6 (Kirigami, Config, CoreAddons, Crash, DBusAddons, I18n, WindowSystem).</p>
+      <div class="panel" role="tabpanel" id="tab-source" aria-labelledby="t-source" tabindex="0">
+        <p>Needs CMake, Ninja, a C++ compiler, extra-cmake-modules, Qt 6.6+ and KDE Frameworks 6 (Kirigami, Config, CoreAddons, Crash, DBusAddons, I18n, WindowSystem).</p>
         <div class="code"><pre><code>git clone https://github.com/aaghashm/persistent-stopwatch
 cd persistent-stopwatch
 cmake -B build -G Ninja
 cmake --build build
-sudo cmake --install build</code></pre><button class="copy" type="button">Copy</button></div>
+sudo cmake --install build</code></pre><button class="copy" type="button" aria-label="Copy build commands">Copy</button></div>
       </div>
     </section>
 
-    <section id="usage">
-      <h2>Use it</h2>
-      <p>Open <em>Persistent Stopwatch</em> from your app menu. In the window:</p>
-      <dl class="keys">
-        <dt><kbd>Space</kbd></dt><dd>start or pause</dd>
-        <dt><kbd>L</kbd></dt><dd>lap</dd>
-        <dt><kbd>R</kbd></dt><dd>reset</dd>
-        <dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>undo the reset</dd>
-      </dl>
-
-      <h3>From the command line</h3>
-      <p>The window is optional. Commands update the saved state and print what you ask for; if the window is open, it follows along.</p>
-      <div class="code"><pre><code><span class="c"># time a build</span>
-persistent-stopwatch --reset --start
-make
-persistent-stopwatch --pause --status
-<span class="out">Paused 00:04:12.7 (started 2026-09-05T10:31:08)</span>
-
-<span class="c"># laps, tab separated: number, split, total</span>
-persistent-stopwatch --laps
-<span class="out">1	00:01:02.4	00:01:02.4
-2	00:00:58.9	00:02:01.3</span></code></pre><button class="copy" type="button">Copy</button></div>
-
-      <table class="options">
-        <thead><tr><th>Option</th><th>Does</th></tr></thead>
-        <tbody>
-          <tr><td><code>--start</code></td><td>start, or resume if paused</td></tr>
-          <tr><td><code>--pause</code></td><td>pause</td></tr>
-          <tr><td><code>--toggle</code></td><td>pause if running, start otherwise</td></tr>
-          <tr><td><code>--lap</code></td><td>record a lap</td></tr>
-          <tr><td><code>--reset</code></td><td>back to zero, laps cleared</td></tr>
-          <tr><td><code>--status</code></td><td>print state, time and start time</td></tr>
-          <tr><td><code>--laps</code></td><td>print the laps</td></tr>
-          <tr><td><code>--json</code></td><td>all of the above as JSON</td></tr>
-        </tbody>
-      </table>
-      <p class="note">Tip: bind <code>persistent-stopwatch --toggle</code> to a global shortcut (System Settings, Keyboard, Shortcuts) and time things without touching the window. <code>man persistent-stopwatch</code> has the rest.</p>
-    </section>
-
-    <section id="how">
-      <h2>How it works</h2>
+    <section class="wrap" id="how" aria-labelledby="how-h">
+      <h2 id="how-h">How it works</h2>
       <p>
         Most stopwatches add up timer ticks while they run, so the count dies with the process.
         This one saves three facts on every button press: the state, the time accumulated before
@@ -138,31 +204,38 @@ persistent-stopwatch --laps
         from those. A wall clock that jumps backward (NTP, a dead RTC battery) is clamped so the
         time can never shrink.
       </p>
-      <p>The state lives in <code>~/.local/state/persistentstopwatchstaterc</code>. The window watches that file, which is how it follows commands typed in a terminal.</p>
+      <p>
+        The state lives in <code>~/.local/state/persistentstopwatchstaterc</code>, a small text file.
+        The window watches it, which is how it follows commands typed in a terminal.
+        Delete it to start from scratch.
+      </p>
     </section>
 
-    <section id="questions">
-      <h2>Questions</h2>
+    <section class="wrap" id="questions" aria-labelledby="questions-h">
+      <h2 id="questions-h">Questions</h2>
       <h3>Does it keep counting while the computer is off?</h3>
-      <p>Yes. It doesn't count at all; it remembers when you started and subtracts.</p>
-      <h3>What if the system clock changes?</h3>
-      <p>Moving it forward looks exactly like time passing, so the stopwatch moves forward too. Moving it backward never makes the time shrink.</p>
+      <p>Yes.</p>
       <h3>Does it need Plasma?</h3>
-      <p>No. It needs the KDE Frameworks libraries, which the packages pull in, and runs on GNOME and other desktops too.</p>
+      <p>No. It needs the KDE Frameworks libraries, which the packages pull in, and runs on GNOME and other desktops too. Without the KDE desktop style installed it uses Qt's default look.</p>
     </section>
   </main>
 
-  <footer>
+  <footer class="wrap">
     <p>
-      Free software under the GPL 2.0 or later.
-      <a href="https://github.com/aaghashm/persistent-stopwatch">GitHub</a> ·
+      Persistent Stopwatch is free software under the GPL 2.0 or later, written by Aaghash Murugesan.
+    </p>
+    <p>
+      <a href="https://github.com/aaghashm/persistent-stopwatch">Source code</a> ·
       <a href="https://github.com/aaghashm/persistent-stopwatch/issues">Report a bug</a> ·
-      <a href="https://github.com/aaghashm/persistent-stopwatch/releases">Releases</a>
+      <a href="https://github.com/aaghashm/persistent-stopwatch/releases">Releases</a> ·
+      <a href="https://github.com/aaghashm/persistent-stopwatch/blob/main/CONTRIBUTING.md">Contributing</a>
     </p>
   </footer>
 
+  <p class="visually-hidden" aria-live="polite" id="copy-status"></p>
+
   <script>
-    // Tabs: plain buttons, arrow keys move between them.
+    // Tabs: plain buttons; arrow keys, Home and End move between them.
     const tabs = [...document.querySelectorAll('[role=tab]')];
     function select(tab) {
       for (const t of tabs) {
@@ -175,27 +248,42 @@ persistent-stopwatch --laps
     tabs.forEach((t, i) => {
       t.addEventListener('click', () => select(t));
       t.addEventListener('keydown', e => {
-        const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-        if (step) {
-          const next = tabs[(i + step + tabs.length) % tabs.length];
-          select(next);
-          next.focus();
+        const n = tabs.length;
+        const to = { ArrowRight: (i + 1) % n, ArrowLeft: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+        if (to !== undefined) {
+          e.preventDefault();
+          select(tabs[to]);
+          tabs[to].focus();
         }
       });
     });
-    // Copy buttons copy the command only, without the example output and comments.
+    select(tabs[0]);
+
+    // Copy buttons copy the commands only, without the example output.
     for (const button of document.querySelectorAll('.copy')) {
       button.addEventListener('click', async () => {
         const code = button.previousElementSibling.querySelector('code').cloneNode(true);
-        code.querySelectorAll('.out, .c').forEach(n => n.remove());
+        code.querySelectorAll('.out').forEach(n => n.remove());
         const text = code.textContent.split('\n').filter(l => l.trim()).join('\n');
+        const status = document.getElementById('copy-status');
         try {
           await navigator.clipboard.writeText(text);
           button.textContent = 'Copied';
+          status.textContent = 'Copied';
         } catch {
+          // No clipboard access: select the command so Ctrl+C works.
+          const range = document.createRange();
+          range.selectNodeContents(button.previousElementSibling);
+          const sel = getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
           button.textContent = 'Press Ctrl+C';
+          status.textContent = 'Command selected, press Ctrl+C';
         }
-        setTimeout(() => (button.textContent = 'Copy'), 1500);
+        setTimeout(() => {
+          button.textContent = 'Copy';
+          status.textContent = '';
+        }, 1500);
       });
     }
   </script>
